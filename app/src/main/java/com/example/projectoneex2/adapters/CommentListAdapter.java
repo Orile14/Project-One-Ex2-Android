@@ -1,12 +1,14 @@
 package com.example.projectoneex2.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ImageButton;
-
+import static com.example.projectoneex2.MainActivity.userList;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectoneex2.Comment;
@@ -29,6 +31,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
         private final TextView tvAuthor;
         private final TextView tvContent;
         public  TextView likeCounter;
+        public ImageView pic;
         public ImageButton likeButton;
         public ImageButton editButton;
         public ImageButton deleteButton;
@@ -40,6 +43,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
             likeCounter = itemView.findViewById(R.id.likeCounter1);
             tvAuthor = itemView.findViewById(R.id.authorName);
             tvContent = itemView.findViewById(R.id.commentText);
+            pic=itemView.findViewById(R.id.imageViewPic);
             editButton=itemView.findViewById(R.id.imageButton6);
             deleteButton=itemView.findViewById(R.id.imageButton12);
             likeButton=itemView.findViewById(R.id.likeButton);
@@ -96,6 +100,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
             final Comment current = comments.get(position);
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
+            holder.pic.setImageBitmap(current.getPic());
 
         }
     }

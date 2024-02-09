@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -13,31 +12,34 @@ import android.widget.ImageButton;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.projectoneex2.Comment;
 import com.example.projectoneex2.Post;
 import com.example.projectoneex2.R;
 
 import java.util.List;
 
 public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.PostViewHolder> {
-    private OnLikeButtonClickListener likeButtonClickListener;
-    private OnEditButtonClickListener editButtonClickListener;
+    private PostActionListener postActionsListener;
 
-    public interface OnLikeButtonClickListener {
+    private PostsListAdapter adapter;
+
+    public interface PostActionListener {
         void onLikeButtonClick(int position);
         void onCommentButtonClick(int position);
-    }
-    public interface OnEditButtonClickListener {
+        void onDeletsButtonClick(int position, PostsListAdapter adapter);
         void onEditButtonClick(int position);
     }
+
     class PostViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvAuthor;
         private final TextView tvContent;
         private final ImageView ivPic;
         public ImageButton likeButton;
         public ImageButton editButton;
+        public ImageButton deleteButton;
+        public ImageView AuthorPic;
         private EditText editTextContent;
         private ImageButton commentButton;
+        private TextView commentCounter;
 
 
 
@@ -50,6 +52,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             editButton=itemView.findViewById(R.id.editButton);
             editTextContent=itemView.findViewById(R.id.editTextContent);
             commentButton=itemView.findViewById(R.id.commentButton);
+            AuthorPic=itemView.findViewById(R.id.imageViewPic);
+            deleteButton=itemView.findViewById(R.id.postDeleteButton);
+            commentCounter=itemView.findViewById(R.id.commentCounter);
         }
     }
 
@@ -59,13 +64,12 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
 
     public PostsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
+        this.adapter=this;
     }
-    public void setOnLikeButtonClickListener(OnLikeButtonClickListener listener) {
-        this.likeButtonClickListener = listener;
+    public void setPostActionListener(PostActionListener listener) {
+        this.postActionsListener = listener;
     }
-    public void setOnEditButtonClickListener(OnEditButtonClickListener listener) {
-        this.editButtonClickListener = listener;
-    }
+
 
     @Override
     public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -78,8 +82,16 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (editButtonClickListener != null) {
-                    editButtonClickListener.onEditButtonClick(position);
+                if (postActionsListener != null) {
+                    postActionsListener.onEditButtonClick(position);
+                }
+            }
+        });
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (postActionsListener != null) {
+                    postActionsListener.onDeletsButtonClick(position,adapter);
                 }
             }
         });
@@ -87,7 +99,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             @Override
             public void onClick(View v) {
 
-                likeButtonClickListener.onCommentButtonClick(position);
+                postActionsListener.onCommentButtonClick(position);
 
             }
         });
@@ -98,8 +110,8 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         holder.likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (likeButtonClickListener != null) {
-                    likeButtonClickListener.onLikeButtonClick(position);
+                if (postActionsListener != null) {
+                    postActionsListener.onLikeButtonClick(position);
                 }
             }
         });
@@ -108,11 +120,18 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             final Post current = posts.get(position);
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
-
-
-            if (current.getPic() !=0) {
+            holder.AuthorPic.setImageBitmap(current.getAuthorPic());
+            int num;
+            if (current.getComments()==null){
+                num=0;
+            }
+            else {
+                num=current.getComments().size();
+            }
+            holder.commentCounter.setText(num+" comments");
+            if (current.getPic() !=null) {
                 // If it's an integer, assume it's a drawable resource ID
-                holder.ivPic.setImageResource((Integer) current.getPic());
+                holder.ivPic.setImageBitmap(current.getPic());
             } else if (current.getuserpick()!=null) {
                 // If it's a Drawable object
                 holder.ivPic.setImageDrawable((Drawable) current.getuserpick());

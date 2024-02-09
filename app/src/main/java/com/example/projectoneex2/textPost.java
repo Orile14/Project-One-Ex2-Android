@@ -1,5 +1,6 @@
 package com.example.projectoneex2;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +18,7 @@ public class textPost extends AppCompatActivity implements Post {
     private String author;
     private String content;
     private int likes=0;
-    private int pic=0;
+    private Bitmap pic;
     private Drawable userpic=null;
 
     public textPost(String author, String content, int id) {
@@ -48,6 +49,12 @@ public class textPost extends AppCompatActivity implements Post {
     public void setLike(boolean value) {
         this.like = value;
     }
+
+    @Override
+    public Bitmap getAuthorPic() {
+        return null;
+    }
+
     public boolean getLike(boolean value) {
         return this.like;
     }
@@ -60,7 +67,7 @@ public class textPost extends AppCompatActivity implements Post {
         return content;
     }
 
-    public int getPic() {
+    public Bitmap getPic() {
         return pic;
     }
     public Drawable getuserpick() {
@@ -68,7 +75,7 @@ public class textPost extends AppCompatActivity implements Post {
     }
 
 
-    public void setPic(int pic) {
+    public void setPic(Bitmap pic) {
         this.pic = pic;
     }
 

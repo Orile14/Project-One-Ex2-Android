@@ -1,5 +1,6 @@
 package com.example.projectoneex2;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +15,12 @@ public class imagePost extends AppCompatActivity implements Post {
     private List<Comment> comments=new ArrayList<>();
     private boolean like=false;
     private int id=-1;
+    int commentsNum=0;
     private String author;
     private String content;
     private int likes=0;
-    private int pic=0;
+    private Bitmap pic;
+    private Bitmap AuthorPic;
     private Drawable userpic=null;
 
     public imagePost(String author, String content, int id) {
@@ -39,6 +42,10 @@ public class imagePost extends AppCompatActivity implements Post {
     public int getId() {
         return id;
     }
+    public void setAuthorPic(Bitmap authorPic){
+        this.AuthorPic=authorPic;
+    }
+
 
     public String getAuthor() {
         return author;
@@ -55,6 +62,12 @@ public class imagePost extends AppCompatActivity implements Post {
     public void setLike(boolean value) {
         this.like = value;
     }
+
+    @Override
+    public Bitmap getAuthorPic() {
+        return this.AuthorPic;
+    }
+
     public boolean getLike(boolean value) {
         return this.like;
     }
@@ -67,7 +80,7 @@ public class imagePost extends AppCompatActivity implements Post {
         return content;
     }
 
-    public int getPic() {
+    public Bitmap getPic() {
         return pic;
     }
     public Drawable getuserpick() {
@@ -75,7 +88,7 @@ public class imagePost extends AppCompatActivity implements Post {
     }
 
 
-    public void setPic(int pic) {
+    public void setPic(Bitmap pic) {
         this.pic = pic;
     }
 
@@ -90,6 +103,9 @@ public class imagePost extends AppCompatActivity implements Post {
     public List<Comment> getComments() {
         return comments;
     }
+    public int getCommentsNum(){
+        return commentsNum;
+    }
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
@@ -99,6 +115,7 @@ public class imagePost extends AppCompatActivity implements Post {
             this.comments=new ArrayList<>();
 
         }
+        commentsNum+=1;
         this.comments.add(0,comment);
     }
 }

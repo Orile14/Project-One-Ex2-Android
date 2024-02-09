@@ -1,4 +1,5 @@
 package com.example.projectoneex2;
+import static com.example.projectoneex2.MainActivity.userList;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,14 +31,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class feedActivity extends AppCompatActivity implements PostsListAdapter.OnLikeButtonClickListener,PostsListAdapter.OnEditButtonClickListener,CommentListAdapter.commentActionsListener {
+public class feedActivity extends AppCompatActivity implements PostsListAdapter.PostActionListener,CommentListAdapter.commentActionsListener {
     private static final int REQUEST_IMAGE_PICK = 2;
     private static final int EDIT_POST_REQUEST = 3;
     private Button btnAdd;
     boolean share;
     private EditText editPost;
     private ImageView imageViewProfile;
+    private ImageView imageViewPic;
     private Bitmap selectedBitmap;
+    private ImageButton menuButton;
 
     private List<Post> posts;
     int position;
@@ -49,12 +53,14 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
         imageViewProfile = findViewById(R.id.imageButtona);
+        imageViewPic=findViewById(R.id.imageViewPic);
+        menuButton=findViewById(R.id.menuButton);
+        imageViewPic.setImageBitmap(userList.get(0).getProfileImage());
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         RecyclerView lstPosts=findViewById(R.id.lstPosts);
         final PostsListAdapter adapter= new PostsListAdapter(this);
         this.adapter=adapter;
-        adapter.setOnLikeButtonClickListener(this);
-        adapter.setOnEditButtonClickListener(this);
+        adapter.setPostActionListener(this);
         lstPosts.setAdapter(adapter);
         lstPosts.setLayoutManager(new LinearLayoutManager(this));
         username = getIntent().getStringExtra("USERNAME");
@@ -70,10 +76,24 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         adapter.setPosts(posts);
         editPost=findViewById(R.id.edtWhatsOnYourMindMiddle);
         btnAdd = findViewById(R.id.button3);
+        ImageButton btnSearch=findViewById(R.id.searchButton);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addPost(adapter,posts);
+            }
+        });
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openMenu();
+            }
+        });
+        
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                search();
             }
         });
         imageViewProfile.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +114,29 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         });
 
     }
+
+    private void openMenu() {
+        Intent i=new Intent(this, Menu.class);
+        startActivity(i);
+    }
+
+    private void search() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_edit_post, null);
+        builder.setView(dialogView);
+        final EditText editText = dialogView.findViewById(R.id.editText);
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                builder.create().hide();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     public void onLikeButtonClick(int position) {
         // Handle like button click for the post at the given position
         // For example:
@@ -118,35 +161,37 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     }
 
     private void addPost(PostsListAdapter adapter, List<Post> posts) {
-        if (selectedBitmap!=null) {
-            Bitmap resizedBitmap = Bitmap.createScaledBitmap(selectedBitmap, 2000, 1200, true);
-            imageViewProfile.setImageBitmap(resizedBitmap);
+        // Set the image view with the selected bitmap (if available)
+        if (selectedBitmap != null) {
+            imageViewProfile.setImageBitmap(selectedBitmap);
         }
+
         String post = editPost.getText().toString();
-        Drawable pic=imageViewProfile.getDrawable();
-        if (!share){
-            posts.add(0,new imagePost(username,post,R.drawable.ic_white_foreground));
-            adapter.notifyDataSetChanged();
-            imageViewProfile.setImageResource(R.drawable.ic_photo_foreground);
-            return;
+        Drawable pic = imageViewProfile.getDrawable();
+
+        // Check if it's a shared post or not
+        if (!share) {
+            // Add a new post with the username, post content, and a placeholder image
+            imagePost p=new imagePost(username, post, R.drawable.ic_white_foreground);
+            p.setAuthorPic(userList.get(0).getProfileImage());
+            posts.add(0, p);
+        } else {
+            imagePost p=new imagePost(username, post, pic);
+            p.setAuthorPic(userList.get(0).getProfileImage());
+            posts.add(0, p);
         }
-        posts.add(0,new imagePost(username,post,pic));
+
+        // Notify the adapter that the data set has changed
         adapter.notifyDataSetChanged();
+
+        // Reset the image view to the default placeholder
         imageViewProfile.setImageResource(R.drawable.ic_photo_foreground);
-
     }
-
-
 
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_IMAGE_PICK);
     }
-
-
-
-
-
 
     @Override
     public void onEditButtonClick(int position) {
@@ -157,6 +202,13 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         showCommentDialog(position);
 
     }
+
+    @Override
+    public void onDeletsButtonClick(int position, PostsListAdapter adapter) {
+        posts.remove(position);
+        adapter.notifyDataSetChanged();
+    }
+
     private void showCommentDialog(int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
@@ -177,6 +229,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                adapter.notifyDataSetChanged();
                 dialog.hide();
             }
         });
