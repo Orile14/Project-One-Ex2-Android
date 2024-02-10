@@ -70,7 +70,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
 
     // Inside PostsListAdapter class
     public void onBindViewHolder(PostViewHolder holder, int position) {
-        holder.likeCounter.setText(String.valueOf(comments.get(position).getLikes())+"Likes");
+        holder.likeCounter.setText(String.valueOf(comments.get(position).getLikes())+" Likes");
         holder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,7 +100,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
             final Comment current = comments.get(position);
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
-            holder.pic.setImageBitmap(current.getPic());
+            holder.pic.setImageBitmap(current.getAuthorPic());
 
         }
     }

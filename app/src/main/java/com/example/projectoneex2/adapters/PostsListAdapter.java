@@ -129,9 +129,10 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
                 num=current.getComments().size();
             }
             holder.commentCounter.setText(num+" comments");
-            if (current.getPic() !=null) {
+            if (current.getId() !=-1) {
                 // If it's an integer, assume it's a drawable resource ID
-                holder.ivPic.setImageBitmap(current.getPic());
+                holder.ivPic.setImageResource(current.getId());
+                holder.ivPic.setVisibility(View.VISIBLE);
             } else if (current.getuserpick()!=null) {
                 // If it's a Drawable object
                 holder.ivPic.setImageDrawable((Drawable) current.getuserpick());

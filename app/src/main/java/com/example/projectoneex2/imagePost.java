@@ -19,7 +19,6 @@ public class imagePost extends AppCompatActivity implements Post {
     private String author;
     private String content;
     private int likes=0;
-    private Bitmap pic;
     private Bitmap AuthorPic;
     private Drawable userpic=null;
 
@@ -81,7 +80,7 @@ public class imagePost extends AppCompatActivity implements Post {
     }
 
     public Bitmap getPic() {
-        return pic;
+        return null;
     }
     public Drawable getuserpick() {
         return userpic;
@@ -89,7 +88,7 @@ public class imagePost extends AppCompatActivity implements Post {
 
 
     public void setPic(Bitmap pic) {
-        this.pic = pic;
+        return;
     }
 
     public void setContent(String content) {

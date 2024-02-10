@@ -14,18 +14,18 @@ public class Comment extends AppCompatActivity implements Post {
     private String author;
     private String content;
     private int likes=0;
-    private Bitmap pic;
+    private Bitmap Authorpic;
     private Drawable userpic=null;
 
-    public Comment(String author, String content) {
+    public Comment(String author, String content, Bitmap authorPic) {
         this.author = author;
         this.content=content;
+        this.Authorpic=authorPic;
     }
 
     public Comment(String author, String content, Drawable pic) {
         this.author = author;
         this.content=content;
-        this.userpic=pic;
 
     }
 
@@ -53,7 +53,7 @@ public class Comment extends AppCompatActivity implements Post {
 
     @Override
     public Bitmap getAuthorPic() {
-        return null;
+        return Authorpic;
     }
 
     public boolean getLike(boolean value) {
@@ -76,7 +76,7 @@ public class Comment extends AppCompatActivity implements Post {
     }
 
     public Bitmap getPic() {
-        return pic;
+        return null;
     }
     public Drawable getuserpick() {
         return userpic;
@@ -84,7 +84,7 @@ public class Comment extends AppCompatActivity implements Post {
 
 
     public void setPic(Bitmap pic) {
-        this.pic = pic;
+        return;
     }
 
     public void setContent(String content) {
