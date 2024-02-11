@@ -178,7 +178,6 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-
         android:orientation="horizontal">
 
         <!-- Add your bottom navigation items here -->
@@ -187,42 +186,43 @@
         <ImageButton
             android:id="@+id/imageButton2"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="75dp"
             android:layout_weight="1"
-
-            app:srcCompat="@drawable/ic_pic_home" />
+            android:contentDescription="Home Button"
+            app:srcCompat="@drawable/ic_home" />
 
         <ImageButton
             android:id="@+id/imageButton3"
             style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="73dp"
             android:layout_weight="1"
-
-            android:tint="#646668"
-            app:srcCompat="@android:drawable/presence_video_away" />
+            android:contentDescription="video Button"
+            app:srcCompat="@drawable/ic_video"
+            app:tint="#0E0E0E" />
 
         <ImageButton
             android:id="@+id/imageButton4"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="72dp"
             android:layout_weight="1"
+            android:contentDescription="notification Button"
 
-            app:srcCompat="@drawable/ic_notifications_black_24dp" />
+            app:srcCompat="@drawable/ic_notification" />
 
         <ImageButton
             android:id="@+id/menuButton"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="75dp"
             android:layout_weight="1"
-
-            android:tint="#2196F3"
-            app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+            android:contentDescription="menu Button"
+            app:srcCompat="@drawable/ic_menu"
+            app:tint="#0E0E0E" />
 
         <ToggleButton
             android:id="@+id/toggleButton2"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="76dp"
             android:layout_weight="1"
             android:text="ToggleButton" />
     </LinearLayout>

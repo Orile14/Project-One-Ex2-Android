@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ImageView;
@@ -33,12 +34,12 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         private final TextView tvAuthor;
         private final TextView tvContent;
         private final ImageView ivPic;
-        public ImageButton likeButton;
+        public Button likeButton;
         public ImageButton editButton;
         public ImageButton deleteButton;
         public ImageView AuthorPic;
         private EditText editTextContent;
-        private ImageButton commentButton;
+        private Button commentButton;
         private TextView commentCounter;
         private TextView time;
 

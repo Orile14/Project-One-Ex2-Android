@@ -258,6 +258,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
             // Assuming you have an ImageView instance named imageView
             imageViewProfile.setImageResource(R.drawable.ic_white_foreground);
             Drawable empty=imageViewProfile.getDrawable();
+            empty.setBounds(0,0,0,0);
             imagePost p = new imagePost(username, post, empty,userList.get(0).getProfileImage(),timeString);
             p.setAuthorPic(userList.get(0).getProfileImage());
             posts.add(0, p);
