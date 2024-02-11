@@ -41,6 +41,9 @@ public class imagePost extends AppCompatActivity implements Post {
     public int getId() {
         return id;
     }
+    public void setId(int i) {
+        this.id=i;
+    }
     public void setAuthorPic(Bitmap authorPic){
         this.AuthorPic=authorPic;
     }
@@ -89,6 +92,9 @@ public class imagePost extends AppCompatActivity implements Post {
 
     public void setPic(Bitmap pic) {
         return;
+    }
+    public void setUserpic(Drawable pic) {
+        this.userpic=pic;
     }
 
     public void setContent(String content) {

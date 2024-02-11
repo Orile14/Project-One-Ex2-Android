@@ -1,6 +1,6 @@
 package com.example.projectoneex2;
 
-import static com.example.projectoneex2.MainActivity.userList;
+import static com.example.projectoneex2.Login.userList;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,7 +33,7 @@ public class Menu extends AppCompatActivity {
     }
 
     private void home() {
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, Login.class);
         startActivity(i);
     }
 }

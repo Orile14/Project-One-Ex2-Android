@@ -17,8 +17,10 @@ public interface Post {
     String getContent();
     Bitmap getPic();
     Drawable getuserpick();
+     void setUserpic(Drawable pic);
     void setPic(Bitmap pic);
     void setContent(String content);
+    void setId(int i);
     void setAuthor(String author);
 
     void addComment(Comment comment);

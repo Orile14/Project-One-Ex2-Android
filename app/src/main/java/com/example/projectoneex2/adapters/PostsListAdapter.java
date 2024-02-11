@@ -50,7 +50,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             ivPic = itemView.findViewById(R.id.ivPic);
             likeButton = itemView.findViewById(R.id.likeButton);
             editButton=itemView.findViewById(R.id.editButton);
-            editTextContent=itemView.findViewById(R.id.editTextContent);
             commentButton=itemView.findViewById(R.id.commentButton);
             AuthorPic=itemView.findViewById(R.id.imageViewPic);
             deleteButton=itemView.findViewById(R.id.postDeleteButton);

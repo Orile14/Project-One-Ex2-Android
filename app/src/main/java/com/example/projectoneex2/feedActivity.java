@@ -1,10 +1,11 @@
 package com.example.projectoneex2;
 
-import static com.example.projectoneex2.MainActivity.userList;
+import static com.example.projectoneex2.Login.userList;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -41,7 +43,7 @@ import java.util.List;
 
 public class feedActivity extends AppCompatActivity implements PostsListAdapter.PostActionListener, CommentListAdapter.commentActionsListener {
     private static final int REQUEST_IMAGE_PICK = 2;
-    private static final int EDIT_POST_REQUEST = 3;
+    private static final int REQUEST_IMAGE_CAPTURE = 3;
     private Button btnAdd;
     boolean share;
     private EditText editPost;
@@ -49,11 +51,11 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     private ImageView imageViewPic;
     private Bitmap selectedBitmap;
     private ImageButton menuButton;
-
+    private ImageButton editImage;
     private List<Post> posts;
-    int position;
     private PostsListAdapter adapter;
     private String username;
+    private Drawable d;
 
 
     @Override
@@ -229,6 +231,10 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_IMAGE_PICK);
     }
+
+
+
+
     @Override
     public void onEditButtonClick(int position) {
         showEditDialog(position);
@@ -274,11 +280,20 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 showAddDialog(position, adapter1);
             }
         });}
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        } else {
+            Toast.makeText(this, "No camera app found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void showAddDialog(final int position, CommentListAdapter adapter1) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_edit_post, null);
+        View dialogView = inflater.inflate(R.layout.dialog_edit_comment, null);
         builder.setView(dialogView);
 
         final EditText editText = dialogView.findViewById(R.id.editText);
@@ -316,14 +331,29 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         final EditText editText = dialogView.findViewById(R.id.editText);
         // Set initial text if needed
         editText.setText(posts.get(position).getContent());
-
+        editImage = dialogView.findViewById(R.id.imageButton);
+        editImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openGallery();
+            }
+        });
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 String updatedContent = editText.getText().toString().trim();
+                Drawable pic = imageViewProfile.getDrawable();
                 // Update the post
                 Post post = posts.get(position);
                 post.setContent(updatedContent);
+                if (post.getId()==-1) {
+                    post.setUserpic(d);
+                }
+                else {
+                    post.setId(-1);
+                    post.setUserpic(d);
+                }
+
                 // Refresh the UI
                 adapter.notifyDataSetChanged();
             }
@@ -343,7 +373,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     public void onCommentEditButtonClick(int position, int postPosition, CommentListAdapter adapter1) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_edit_post, null);
+        View dialogView = inflater.inflate(R.layout.dialog_edit_comment, null);
         builder.setView(dialogView);
 
         final EditText editText = dialogView.findViewById(R.id.editText);
@@ -407,15 +437,34 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Convert the URI to a Bitmap
                 Bitmap originalBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
                 selectedBitmap = originalBitmap;
+                this.d = bitmapToDrawable(selectedBitmap);
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 400, 400, true);
                 imageViewProfile.setImageBitmap(resizedBitmap);
-
-
+                 resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 600, 400, true);
+                if (editImage!=null) {
+                    editImage.setImageBitmap(resizedBitmap);
+                }
                 // Set the resized image to your ImageView (assuming imageViewProfile is your ImageView)
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
+            // Handle camera capture
+            Bundle extras = data.getExtras();
+            Bitmap capturedBitmap = (Bitmap) extras.get("data");
+            selectedBitmap = capturedBitmap;
+            this.d = bitmapToDrawable(selectedBitmap);
+            Bitmap resizedBitmap = Bitmap.createScaledBitmap(capturedBitmap, 400, 400, true);
+            imageViewProfile.setImageBitmap(resizedBitmap);
+            resizedBitmap = Bitmap.createScaledBitmap(capturedBitmap, 600, 400, true);
+            if (editImage!=null) {
+                editImage.setImageBitmap(resizedBitmap);
+            }
+        }
+    }
+    private Drawable bitmapToDrawable(Bitmap bitmap) {
+        return new BitmapDrawable(getResources(), bitmap);
     }
 
 }

@@ -82,6 +82,11 @@ public class Comment extends AppCompatActivity implements Post {
         return userpic;
     }
 
+    @Override
+    public void setUserpic(Drawable pic) {
+
+    }
+
 
     public void setPic(Bitmap pic) {
         return;
@@ -89,6 +94,11 @@ public class Comment extends AppCompatActivity implements Post {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public void setId(int i) {
+
     }
 
     public void setAuthor(String author) {

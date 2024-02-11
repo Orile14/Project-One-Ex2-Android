@@ -12,11 +12,5 @@
         android:layout_height="wrap_content"
         android:hint="Enter your post content here" />
 
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="118dp"
-        android:layout_height="149dp"
-        android:backgroundTint="#FDFEFF"
-        android:contentDescription="Upload Photo"
-        android:src="@drawable/ic_pic12_foreground" />
+
 </LinearLayout>

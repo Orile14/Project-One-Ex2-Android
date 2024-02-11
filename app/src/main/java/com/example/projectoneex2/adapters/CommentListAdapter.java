@@ -1,14 +1,13 @@
 package com.example.projectoneex2.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ImageButton;
-import static com.example.projectoneex2.MainActivity.userList;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectoneex2.Comment;
