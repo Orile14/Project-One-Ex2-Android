@@ -265,6 +265,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         } else {
             imagePost p = new imagePost(username, post, pic,userList.get(0).getProfileImage(),timeString);
             posts.add(0, p);
+            share=false;
         }
 
         // Notify the adapter that the data set has changed

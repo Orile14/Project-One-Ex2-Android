@@ -42,21 +42,19 @@
             <ImageButton
                 android:id="@+id/imageButton10"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="-2"
 
-                app:srcCompat="@android:drawable/sym_action_chat"
-                 />
+                app:srcCompat="@drawable/ic_comment" />
 
 
             <ImageButton
                 android:id="@+id/searchButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="0"
-                app:tint="#0B0A0A"
-                app:srcCompat="@android:drawable/ic_menu_search"
-                />
+                app:srcCompat="@drawable/ic_search"
+                app:tint="#0B0A0A" />
 
             <ImageButton
                 android:id="@+id/imageButton11"
@@ -64,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:tint="#131313"
-                app:srcCompat="@android:drawable/ic_menu_upload"
+                app:srcCompat="@drawable/ic_upload"
                  />
 
         </LinearLayout>
@@ -140,8 +138,8 @@
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refreshLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="473dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:backgroundTint="#FFFFFF"
             android:foregroundTint="#FFFFFF">
 
@@ -149,7 +147,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/lstPosts"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                 />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -173,26 +172,19 @@
         <ImageButton
             android:id="@+id/imageButton2"
             android:layout_width="0dp"
-            android:layout_height="73dp"
+            android:layout_height="70dp"
             android:layout_weight="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_home"
             app:tint="#0781E3" />
 
-        <ToggleButton
-            android:id="@+id/toggleButton3"
-            android:layout_width="0dp"
-            android:layout_height="73dp"
-            android:layout_weight="1"
-            android:text="ToggleButton"
-            app:srcCompat="@drawable/ic_mode"
-            app:tint="#0E0E0E" />
+
 
         <ImageButton
             android:id="@+id/imageButton3"
             style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="0dp"
-            android:layout_height="73dp"
+            android:layout_height="70dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/ic_video"
             app:tint="#0E0E0E" />
@@ -200,15 +192,25 @@
         <ImageButton
             android:id="@+id/imageButton4"
             android:layout_width="0dp"
-            android:layout_height="75dp"
+            android:layout_height="70dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/ic_notification"
+            app:tint="#0E0E0E" />
+
+
+        <ToggleButton
+            android:id="@+id/toggleButton3"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:text="ToggleButton"
+            app:srcCompat="@drawable/ic_mode"
             app:tint="#0E0E0E" />
 
         <ImageButton
             android:id="@+id/menuButton"
             android:layout_width="0dp"
-            android:layout_height="72dp"
+            android:layout_height="70dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/ic_menu"
             app:tint="#0E0E0E" />
