@@ -4,7 +4,6 @@
     android:id="@+id/dialogContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="#F3EFEF"
     android:padding="16dp">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -15,7 +14,7 @@
         android:layout_alignParentEnd="true"
         android:clickable="true"
         android:src="@android:drawable/ic_delete"
-        app:backgroundTint="#2196F3" />
+         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton5"
@@ -24,7 +23,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:clickable="true"
-        app:backgroundTint="#2196F3"
         app:srcCompat="@drawable/ic_addcomment_foreground" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -33,14 +31,13 @@
         android:layout_height="match_parent"
         android:layout_below="@id/floatingActionButton4"
         android:layout_above="@id/floatingActionButton5"
-        android:backgroundTint="#F1F5F6">
+        >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dialogRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/darker_gray"
-            android:backgroundTint="#FDFDFD" />
+             />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

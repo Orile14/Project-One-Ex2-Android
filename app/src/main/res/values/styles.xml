@@ -1,0 +1,25 @@
+<resources>
+    <style name="AppTheme.Light" parent="Theme.AppCompat.Light">
+        <!-- Other theme attributes -->
+        <item name="colorPrimary">@color/white</item>
+        <!-- Define other attributes for light theme -->
+    </style>
+
+    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+        <!-- Override attributes for dark theme -->
+        <item name="colorPrimary">@color/black</item>
+        <!-- Define other attributes for dark theme -->
+    </style>
+    <style name="CommentDialogTheme.Light" parent="Theme.AppCompat.Dialog">
+        <!-- Customize dialog attributes here -->
+        <item name="android:windowBackground">@color/white</item>
+        <!-- Add other attributes for dark mode if needed -->
+    </style>
+    <style name="CommentDialogTheme.Dark" parent="Theme.AppCompat.Dialog">
+        <!-- Customize dialog attributes here -->
+        <item name="android:windowBackground">@color/black</item>
+        <!-- Add other attributes for dark mode if needed -->
+    </style>
+
+
+</resources>
