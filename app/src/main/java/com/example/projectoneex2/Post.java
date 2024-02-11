@@ -8,6 +8,8 @@ import java.util.List;
 public interface Post {
      int getId();
     String getAuthor();
+    int getAuthorPicId();
+    String getTime();
     Boolean getLike();
     void  setLike(boolean value);
     Bitmap getAuthorPic();

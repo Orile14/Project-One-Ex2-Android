@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,16 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:backgroundTint="@color/background_color"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/textViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
             android:text="Sign Up"
-            android:textSize="24sp"
-            android:layout_gravity="center_horizontal" />
+            android:textSize="24sp" />
 
         <EditText
             android:id="@+id/editTextUsername"
@@ -53,10 +55,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
             android:contentDescription="User's Profile Photo"
-            android:onClick="onPhotoClick"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_pic12_foreground"
-            />
+            android:src="@drawable/ic_pic12_foreground" />
 
         <Button
             android:id="@+id/btnSignUp"
@@ -66,5 +66,11 @@
             android:backgroundTint="#1877F2"
             android:text="Sign Up" />
     </LinearLayout>
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ToggleButton" />
 
 </RelativeLayout>

@@ -40,6 +40,15 @@ public class Comment extends AppCompatActivity implements Post {
     }
 
     @Override
+    public int getAuthorPicId() {
+        return 0;
+    }
+
+    public String getTime(){
+        return null;
+    }
+
+    @Override
     public Boolean getLike() {
         return like;
     }

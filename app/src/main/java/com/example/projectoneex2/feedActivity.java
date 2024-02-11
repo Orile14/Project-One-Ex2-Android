@@ -1,5 +1,8 @@
 package com.example.projectoneex2;
 
+import static com.example.projectoneex2.Login.PREF_THEME_KEY;
+import static com.example.projectoneex2.Login.isDarkTheme;
+import static com.example.projectoneex2.Login.sharedPreferences;
 import static com.example.projectoneex2.Login.userList;
 
 import android.content.DialogInterface;
@@ -10,14 +13,17 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -39,7 +45,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 public class feedActivity extends AppCompatActivity implements PostsListAdapter.PostActionListener, CommentListAdapter.commentActionsListener {
     private static final int REQUEST_IMAGE_PICK = 2;
@@ -56,15 +64,20 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     private PostsListAdapter adapter;
     private String username;
     private Drawable d;
+    private ToggleButton darkModeToggle;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadThemePreference();
+        applyTheme();
         setContentView(R.layout.activity_feed);
         imageViewProfile = findViewById(R.id.imageButtona);
         imageViewPic = findViewById(R.id.imageViewPic);
         menuButton = findViewById(R.id.menuButton);
+        darkModeToggle = findViewById(R.id.toggleButton3);
+        darkModeToggle.setChecked(isDarkTheme);
         imageViewPic.setImageBitmap(userList.get(0).getProfileImage());
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         RecyclerView lstPosts = findViewById(R.id.lstPosts);
@@ -89,6 +102,14 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
             @Override
             public void onClick(View view) {
                 openMenu();
+            }
+        });
+        darkModeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isDarkTheme = isChecked;
+                saveThemePreference();
+                recreate(); // Restart activity to apply theme changes
             }
         });
 
@@ -121,6 +142,16 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         Intent i = new Intent(this, Menu.class);
         startActivity(i);
     }
+    private void loadThemePreference() {
+        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        isDarkTheme = sharedPreferences.getBoolean(PREF_THEME_KEY, false); // Default is light theme
+    }
+    private void applyTheme() {
+        setTheme(isDarkTheme ? R.style.AppTheme_Dark : R.style.AppTheme_Light);
+    }
+    private void saveThemePreference() {
+        sharedPreferences.edit().putBoolean(PREF_THEME_KEY, isDarkTheme).apply();
+    }
 
     private void initPosts() {
         try {
@@ -144,10 +175,11 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
 
                 String author = jsonObject.getString("author");
                 String content = jsonObject.getString("content");
+                String time = jsonObject.getString("time");
                 int imageResourceId = getResources().getIdentifier(jsonObject.getString("imageResourceId"), "drawable", getPackageName());
-
+                int profilePic=getResources().getIdentifier(jsonObject.getString("profilePic"), "drawable", getPackageName());
                 // Create a Post object with the extracted data
-                Post new_post = new imagePost(author, content, imageResourceId);
+                Post new_post = new imagePost(author, content, imageResourceId,profilePic,time);
 
                 // Add the Post object to the list
                 posts.add(new_post);
@@ -203,21 +235,34 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     }
 
     private void addPost(PostsListAdapter adapter, List<Post> posts) {
+        Calendar calendar = Calendar.getInstance();
+
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        // Construct a string with hours and minutes
+        String timeString = String.format("%02d:%02d", hour, minute);
         // Set the image view with the selected bitmap (if available)
         if (selectedBitmap != null) {
             imageViewProfile.setImageBitmap(selectedBitmap);
         }
         String post = editPost.getText().toString();
+        if (TextUtils.isEmpty(post)) {
+            // If the post text is empty, show a toast message and return
+            Toast.makeText(this, "Please write something before posting", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Drawable pic = imageViewProfile.getDrawable();
         // Check if it's a shared post or not
         if (!share) {
             // Add a new post with the username, post content, and a placeholder image
-            imagePost p = new imagePost(username, post, R.drawable.ic_white_foreground);
+            // Assuming you have an ImageView instance named imageView
+            imageViewProfile.setImageResource(R.drawable.ic_white_foreground);
+            Drawable empty=imageViewProfile.getDrawable();
+            imagePost p = new imagePost(username, post, empty,userList.get(0).getProfileImage(),timeString);
             p.setAuthorPic(userList.get(0).getProfileImage());
             posts.add(0, p);
         } else {
-            imagePost p = new imagePost(username, post, pic);
-            p.setAuthorPic(userList.get(0).getProfileImage());
+            imagePost p = new imagePost(username, post, pic,userList.get(0).getProfileImage(),timeString);
             posts.add(0, p);
         }
 
@@ -234,9 +279,16 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
 
 
 
-
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
     @Override
     public void onEditButtonClick(int position) {
+        Post post = posts.get(position);
+        if (!Objects.equals(post.getAuthor(), userList.get(0).getUsername())){
+            showToast("you cant edit post that are not yours!");
+            return;
+        }
         showEditDialog(position);
 
     }
@@ -346,14 +398,8 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Update the post
                 Post post = posts.get(position);
                 post.setContent(updatedContent);
-                if (post.getId()==-1) {
-                    post.setUserpic(d);
-                }
-                else {
                     post.setId(-1);
                     post.setUserpic(d);
-                }
-
                 // Refresh the UI
                 adapter.notifyDataSetChanged();
             }

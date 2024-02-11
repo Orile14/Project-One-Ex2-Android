@@ -40,6 +40,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         private EditText editTextContent;
         private ImageButton commentButton;
         private TextView commentCounter;
+        private TextView time;
 
 
 
@@ -54,6 +55,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             AuthorPic=itemView.findViewById(R.id.imageViewPic);
             deleteButton=itemView.findViewById(R.id.postDeleteButton);
             commentCounter=itemView.findViewById(R.id.commentCounter);
+            time=itemView.findViewById(R.id.time);
         }
     }
 
@@ -114,9 +116,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
                 }
             }
         });
-
         if (posts != null) {
             final Post current = posts.get(position);
+            holder.time.setText(current.getTime());
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
             holder.AuthorPic.setImageBitmap(current.getAuthorPic());
@@ -131,6 +133,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             if (current.getId() !=-1) {
                 // If it's an integer, assume it's a drawable resource ID
                 holder.ivPic.setImageResource(current.getId());
+                holder.AuthorPic.setImageResource(current.getAuthorPicId());
                 holder.ivPic.setVisibility(View.VISIBLE);
             } else if (current.getuserpick()!=null) {
                 // If it's a Drawable object
@@ -143,6 +146,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             }
         }
     }
+
 
 
     public void setPosts (List<Post> s){

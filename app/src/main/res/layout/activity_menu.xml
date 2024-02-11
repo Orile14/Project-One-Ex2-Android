@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:backgroundTint="@color/background_color"
     android:layout_height="match_parent">
 
     <!-- Search Bar -->
@@ -12,7 +13,6 @@
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FBFAFA"
         android:orientation="horizontal"
 
         android:padding="8dp">
@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="30"
-                android:background="#FBFAFA"
+
                 app:srcCompat="@drawable/facebook_logo__2019__svg__1_" />
 
             <TextView
@@ -39,20 +39,11 @@
                 android:text="                 " />
 
             <ImageButton
-                android:id="@+id/imageButton10"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="-2"
-                android:background="#FBF5F5"
-                android:tint="#5E5656"
-                app:srcCompat="@drawable/ic_setting_foreground" />
-
-            <ImageButton
                 android:id="@+id/searchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0"
-                android:background="#F6F2F2"
+
                 android:tint="#0B0A0A"
                 app:srcCompat="@android:drawable/ic_menu_search" />
 
@@ -64,6 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+
         android:layout_below="@+id/searchBar"
         android:padding="8dp">
 
@@ -89,7 +81,6 @@
                 android:layout_width="159dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/white"
                 android:gravity="start"
                 android:inputType="textMultiLine"
                 android:lines="2"
@@ -112,6 +103,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
             android:orientation="vertical">
 
             <TextView
@@ -119,9 +111,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:textSize="20sp"
                 android:gravity="center"
-                android:text="Messges" />
+                android:text="Messges"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -186,7 +178,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:background="#CCCCCC"
+
         android:orientation="horizontal">
 
         <!-- Add your bottom navigation items here -->
@@ -197,9 +189,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#FBFBFB"
-            android:tint="#111112"
-            app:srcCompat="@drawable/ic_home_black_24dp" />
+
+            app:srcCompat="@drawable/ic_pic_home" />
 
         <ImageButton
             android:id="@+id/imageButton3"
@@ -207,8 +198,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#FBF9F9"
-            android:backgroundTint="#FFFFFF"
+
             android:tint="#646668"
             app:srcCompat="@android:drawable/presence_video_away" />
 
@@ -217,9 +207,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/white"
-            android:backgroundTint="#F6F4F4"
-            android:tint="#6D7073"
+
             app:srcCompat="@drawable/ic_notifications_black_24dp" />
 
         <ImageButton
@@ -227,10 +215,16 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#FAF1F1"
-            android:backgroundTint="#F8F4F4"
+
             android:tint="#2196F3"
             app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+
+        <ToggleButton
+            android:id="@+id/toggleButton2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="ToggleButton" />
     </LinearLayout>
 
 </RelativeLayout>

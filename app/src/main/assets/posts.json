@@ -3,39 +3,36 @@
     "author": "Rona",
     "content": "nice sun",
     "imageResourceId": "icons8_delete_192",
-    "comments": [
-      {
-        "author": "ori",
-        "content": "not that good"
-      },
-      {
-        "author": "ALICE",
-        "content": "NO!,i love it!"
-      }
-    ]
+    "profilePic": "ic_woman",
+    "time":"13:09"
   },
   {
     "author": "Alice",
     "content": "wonderul day!",
     "imageResourceId": "ic_pic1",
-    "comments": []
+    "profilePic": "ic_woman",
+    "time":"14:42"
   },
   {
     "author": "Danni",
     "content": "go Lakers!!!!",
-    "imageResourceId": "ic_action_name",
-    "comments": []
+    "imageResourceId": "ic_pic_monkey",
+    "profilePic": "ic_danni",
+    "time":"20:17"
   },
   {
     "author": "Ori",
     "content": "miss home...",
-    "imageResourceId": "ic_action_name",
-    "comments": []
+    "imageResourceId": "ic_pic1",
+    "profilePic": "ic_shimon",
+    "time":"08:00"
   },
   {
     "author": "Shimon",
     "content": "so funny lol",
-    "imageResourceId": "ic_action_name",
-    "comments": []
+    "imageResourceId": "ic_pic_burger",
+    "profilePic": "ic_men_1",
+    "time":"17:21"
+
   }
 ]

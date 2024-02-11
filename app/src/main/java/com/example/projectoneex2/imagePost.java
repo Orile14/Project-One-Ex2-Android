@@ -18,22 +18,26 @@ public class imagePost extends AppCompatActivity implements Post {
     int commentsNum=0;
     private String author;
     private String content;
+    private String time;
     private int likes=0;
     private Bitmap AuthorPic;
+    private int profileImage;
     private Drawable userpic=null;
 
-    public imagePost(String author, String content, int id) {
+    public imagePost(String author, String content, int id, int profileImage,String time) {
         this.author = author;
         this.id=id;
         this.content=content;
-
-
+        this.profileImage=profileImage;
+        this.time=time;
     }
 
-    public imagePost(String author, String content, Drawable pic) {
+    public imagePost(String author, String content, Drawable pic, Bitmap profileImage,String time) {
         this.author = author;
         this.content=content;
         this.userpic=pic;
+        this.AuthorPic=profileImage;
+        this.time=time;
 
     }
 
@@ -52,6 +56,15 @@ public class imagePost extends AppCompatActivity implements Post {
     public String getAuthor() {
         return author;
     }
+
+    @Override
+    public int getAuthorPicId() {
+        return this.profileImage;
+    }
+
+   public String getTime(){
+        return time;
+   }
 
     @Override
     public Boolean getLike() {
