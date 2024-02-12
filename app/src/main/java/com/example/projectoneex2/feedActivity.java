@@ -277,6 +277,8 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         adapter.notifyDataSetChanged();
         // Reset the image view to the default placeholder
         imageViewProfile.setImageResource(R.drawable.ic_photo_foreground);
+        editPost.setHint("what's on your mind?");
+        editPost.setText("");
     }
 
     // Define a method to open the gallery for image selection
