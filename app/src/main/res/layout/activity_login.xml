@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword" />
 
         <Button
@@ -91,7 +91,7 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:background="@drawable/facbook_radius"
-            android:text="Create New Account"
+            android:text="@string/create_new_account"
             android:textColor="#1877F2" />
 
         <ImageView

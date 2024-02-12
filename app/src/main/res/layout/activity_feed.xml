@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="                 "
+                android:text="@string/empty_space"
                 />
 
             <ImageButton
@@ -103,7 +103,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:hint="What's on your mind"
+                android:hint="@string/what_s_on_your_mind"
                 android:inputType="textMultiLine"
                 android:lines="2"
                 android:maxLines="3"
@@ -124,7 +124,7 @@
             android:layout_height="35dp"
             android:backgroundTint="#2D49E6"
             android:background="@drawable/facbook_radius"
-            android:text="Share" />
+            android:text="@string/share" />
 
     </LinearLayout>
 
@@ -204,7 +204,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
-            android:text="ToggleButton"
+            android:text="@string/togglebutton"
             app:srcCompat="@drawable/ic_mode"
             app:tint="#0E0E0E" />
 

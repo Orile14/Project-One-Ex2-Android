@@ -14,19 +14,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.io.IOException;
 import java.util.ArrayList;
 
+// Activity class for user signup
 public class SignUp extends AppCompatActivity {
-
     public static ArrayList<User> userList = new ArrayList<>();
     private static final int REQUEST_IMAGE_PICK = 2;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    // Views
     private EditText editTextUsername;
     private EditText editTextNickname;
     private EditText editTextPassword;
@@ -37,11 +36,10 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //dark mode setting
         loadThemePreference();
         applyTheme();
         setContentView(R.layout.activity_signup);
-
-        // Initialize views
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickname=findViewById(R.id.editTextNickname);
@@ -49,12 +47,9 @@ public class SignUp extends AppCompatActivity {
         Button btnSignUp = findViewById(R.id.btnSignUp);
         imageViewProfile = findViewById(R.id.imageViewProfile);
         ToggleButton darkModeToggle = findViewById(R.id.toggleButton);
-        // Set toggle button state
         darkModeToggle.setChecked(isDarkTheme);
-
         // Set onClickListener for the signup button
         btnSignUp.setOnClickListener(view -> signupUser());
-
         // Set onClickListener for the profile image
         imageViewProfile.setOnClickListener(view -> openGallery());
         darkModeToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -64,6 +59,7 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    // Method to handle user signup
     private void signupUser() {
         String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
@@ -79,7 +75,6 @@ public class SignUp extends AppCompatActivity {
             showToast("Passwords do not match");
             return;
         }
-
         // Check if the username is already taken
         for (User user : userList) {
             if (user.getUsername().equals(username)) {
@@ -91,7 +86,6 @@ public class SignUp extends AppCompatActivity {
             showToast("Profile picture is required");
             return;
         }
-
         // Add the new user to the list
         Login.userList.add(new User(username, password,this.pic,nickname));
         Intent i=new Intent(SignUp.this, Login.class);
@@ -99,9 +93,13 @@ public class SignUp extends AppCompatActivity {
         // Display a success message
         showToast("Signup successful");
     }
+
+    // Method to display toast messages
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+    // Method to open image gallery for selecting profile picture
     private void openGallery() {
         final CharSequence[] options = {"Choose from Gallery", "Take a Picture", "Cancel"};
 
@@ -123,7 +121,7 @@ public class SignUp extends AppCompatActivity {
         builder.show();
     }
 
-    // Modify onActivityResult() method
+    // Method to handle image selection from gallery or camera
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -147,17 +145,18 @@ public class SignUp extends AppCompatActivity {
             this.pic = imageBitmap;
         }
     }
+
+    // Method to load theme preference from SharedPreferences
     private void loadThemePreference() {
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         isDarkTheme = sharedPreferences.getBoolean(PREF_THEME_KEY, false); // Default is light theme
     }
+    // Method to apply the selected theme
     private void applyTheme() {
         setTheme(isDarkTheme ? R.style.AppTheme_Dark : R.style.AppTheme_Light);
     }
+    // Method to save theme preference to SharedPreferences
     private void saveThemePreference() {
         sharedPreferences.edit().putBoolean(PREF_THEME_KEY, isDarkTheme).apply();
     }
-
-
-
 }

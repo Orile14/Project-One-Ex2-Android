@@ -50,7 +50,6 @@ import java.util.Objects;
 
 public class feedActivity extends AppCompatActivity implements PostsListAdapter.PostActionListener, CommentListAdapter.commentActionsListener {
     private static final int REQUEST_IMAGE_PICK = 2;
-    private static final int REQUEST_IMAGE_CAPTURE = 3;
     boolean share;
     private EditText editPost;
     private ImageView imageViewProfile;
@@ -65,32 +64,43 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //theme operation(darkmode if needed)
         loadThemePreference();
         applyTheme();
         setContentView(R.layout.activity_feed);
+        //profile pic of the user
         imageViewProfile = findViewById(R.id.imageButtona);
         ImageView imageViewPic = findViewById(R.id.imageViewPic);
         ImageButton menuButton = findViewById(R.id.menuButton);
         ToggleButton darkModeToggle = findViewById(R.id.toggleButton3);
+        //marking darkbutton state
         darkModeToggle.setChecked(isDarkTheme);
+        //only 1 user therefore the first one
         imageViewPic.setImageBitmap(userList.get(0).getProfileImage());
+        //layout for the posts
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         RecyclerView lstPosts = findViewById(R.id.lstPosts);
+        //adapter for the posts
         final PostsListAdapter adapter = new PostsListAdapter(this);
         this.adapter = adapter;
+        //so we can preform on click actions from the post
         adapter.setPostActionListener(this);
         lstPosts.setAdapter(adapter);
         lstPosts.setLayoutManager(new LinearLayoutManager(this));
+        //only one user at lsit
         nickname = userList.get(0).getNickname();
+        //create the 10 defualt posts
         if (posts==null){
         initPosts();}
         adapter.setPosts(posts);
+        //new post upload
         editPost = findViewById(R.id.edtWhatsOnYourMindMiddle);
         Button btnAdd = findViewById(R.id.button3);
         ImageButton btnSearch = findViewById(R.id.searchButton);
         btnAdd.setOnClickListener(view -> addPost(adapter, posts));
         menuButton.setOnClickListener(view -> openMenu());
         darkModeToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            //changing dark mod situation
             isDarkTheme = isChecked;
             saveThemePreference();
             recreate(); // Restart activity to apply theme changes
@@ -98,7 +108,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
 
         btnSearch.setOnClickListener(view -> search());
         imageViewProfile.setOnClickListener(view -> {
-            share = true;
+            //user uploaded a photo
             openGallery();
         });
 
@@ -111,9 +121,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
 
     // Define a method to open the menu activity
     private void openMenu() {
-        // Create an intent to start the Menu activity
         Intent i = new Intent(this, Menu.class);
-        // Start the activity
         startActivity(i);
     }
 
@@ -124,7 +132,6 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         // Load the theme preference (default is light theme)
         isDarkTheme = sharedPreferences.getBoolean(PREF_THEME_KEY, false);
     }
-
     // Define a method to apply the selected theme
     private void applyTheme() {
         // Apply the selected theme based on the theme preference
@@ -553,6 +560,8 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 if (editImage != null) {
                     editImage.setImageBitmap(resizedBitmap);
                 }
+                //mark that the user upload a photo
+                share = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }

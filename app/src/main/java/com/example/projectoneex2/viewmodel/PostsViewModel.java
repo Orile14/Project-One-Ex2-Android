@@ -7,20 +7,28 @@ import com.example.projectoneex2.imagePost;
 
 import java.util.List;
 
+// ViewModel class responsible for managing the data of posts
 public class PostsViewModel extends ViewModel {
-    private PostsViewModel mRepository;
-    private LiveData<List<imagePost>> posts;
+    private PostsViewModel mRepository; // Repository instance for handling post data
+    private LiveData<List<imagePost>> posts; // LiveData object containing a list of image posts
 
-    public LiveData<List<imagePost>> get(){
+    // Method to retrieve the LiveData object containing the list of image posts
+    public LiveData<List<imagePost>> get() {
         return posts;
     }
-    public void add(imagePost post){
-                mRepository.add(post);
+
+    // Method to add a new image post to the repository
+    public void add(imagePost post) {
+        mRepository.add(post);
     }
-    public void delete(imagePost post){
+
+    // Method to delete an existing image post from the repository
+    public void delete(imagePost post) {
         mRepository.delete(post);
-   }
-    public void reaload(){
-        mRepository.reaload();
+    }
+
+    // Method to reload the data from the repository
+    public void reload() {
+        mRepository.reload();
     }
 }

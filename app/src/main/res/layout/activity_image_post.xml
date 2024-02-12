@@ -25,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Author Name"
+        android:text="@string/author_name1"
         app:layout_constraintBottom_toBottomOf="@id/imageViewPic"
         app:layout_constraintStart_toEndOf="@id/imageViewPic"
         app:layout_constraintTop_toTopOf="@id/imageViewPic" />
@@ -35,7 +35,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="time"
+        android:text="@string/time"
         app:layout_constraintBottom_toBottomOf="@id/imageViewPic"
         app:layout_constraintStart_toEndOf="@id/imageViewPic"
         app:layout_constraintTop_toBottomOf="@id/tvAuthor" />
@@ -71,7 +71,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Post content goes here"
+        android:text="@string/post_content_goes_here"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +112,7 @@
         android:background="@drawable/rounded_button_background"
         android:drawableLeft="@drawable/ic_like"
         android:drawablePadding="8dp"
-        android:text="Like"
+        android:text="@string/like"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         app:layout_constraintEnd_toStartOf="@id/commentButton"
@@ -127,7 +127,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="0 likes"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:text="@string/_0_likes1"
         app:layout_constraintStart_toStartOf="@id/likeButton"
         app:layout_constraintTop_toBottomOf="@id/likeButton" />
 
@@ -138,7 +140,7 @@
         android:background="@drawable/rounded_button_background"
         android:drawableLeft="@drawable/ic_comment"
         android:drawablePadding="8dp"
-        android:text="Comment"
+        android:text="@string/comment"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         app:layout_constraintEnd_toStartOf="@id/shareButton"
@@ -150,7 +152,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="0 comments"
+        android:text="@string/_0_comments"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         app:layout_constraintStart_toStartOf="@id/shareButton"
         app:layout_constraintTop_toBottomOf="@id/shareButton" />
 
@@ -163,7 +167,7 @@
         android:drawablePadding="8dp"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:text="share"
+        android:text="@string/share1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/commentButton"
         app:layout_constraintTop_toBottomOf="@id/scroll" />

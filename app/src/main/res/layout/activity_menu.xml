@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="                 " />
+                android:text="@string/empty_background" />
 
             <ImageButton
                 android:id="@+id/searchButton"
@@ -116,7 +116,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Messages"
+                android:text="@string/messages"
                 android:textStyle="bold"
                 android:textSize="20sp"
                 android:background="@drawable/menu_buttons" />
@@ -131,7 +131,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/menu_buttons"
                 android:gravity="center"
-                android:text="Friends"
+                android:text="@string/friends"
                 android:textSize="20sp" />
 
             <TextView
@@ -142,7 +142,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Pictures"
+                android:text="@string/pictures"
                 android:textSize="20sp"
                 android:background="@drawable/menu_buttons"/>
 
@@ -155,7 +155,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/menu_buttons"
                 android:gravity="center"
-                android:text="Posts"
+                android:text="@string/posts"
                 android:textSize="20sp" />
 
             <TextView
@@ -167,7 +167,7 @@
                 android:layout_weight="1"
                 android:textSize="20sp"
                 android:gravity="center"
-                android:text="Videos"
+                android:text="@string/videos"
                 android:background="@drawable/menu_buttons"/>
 
             <TextView
@@ -179,14 +179,14 @@
                 android:layout_weight="1"
                 android:textSize="20sp"
                 android:gravity="center"
-                android:text="MarketPlace"
+                android:text="@string/marketplace"
                 android:background="@drawable/menu_buttons"/>
 
             <Button
                 android:id="@+id/Logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Logout"
+                android:text="@string/logout"
                 android:textStyle="bold"
                 android:background="@drawable/radius_logout"
                 app:rippleColor="#F81605" />
@@ -212,7 +212,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
-            android:contentDescription="Home Button"
+            android:contentDescription="@string/home_button"
             app:srcCompat="@drawable/ic_home" />
 
         <ImageButton
@@ -221,7 +221,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
-            android:contentDescription="video Button"
+            android:contentDescription="@string/video_button"
             app:srcCompat="@drawable/ic_video"
             app:tint="#0E0E0E" />
 
@@ -230,7 +230,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
-            android:contentDescription="notification Button"
+            android:contentDescription="@string/notification_button"
 
             app:srcCompat="@drawable/ic_notification" />
 
@@ -239,7 +239,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
-            android:text="ToggleButton" />
+            android:text="@string/togglebutton1" />
 
 
         <ImageButton
@@ -247,7 +247,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
-            android:contentDescription="menu Button"
+            android:contentDescription="@string/menu_button"
             app:srcCompat="@drawable/ic_menu"
             app:tint="#0781E3"  />
     </LinearLayout>

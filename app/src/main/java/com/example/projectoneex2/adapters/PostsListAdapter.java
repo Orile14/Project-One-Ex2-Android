@@ -8,31 +8,27 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.projectoneex2.Post;
 import com.example.projectoneex2.R;
-
 import java.util.List;
 
+// Adapter class for managing the display of posts in a RecyclerView
 public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.PostViewHolder> {
-    private PostActionListener postActionsListener;
+    private PostActionListener postActionsListener; // Listener for post actions
 
     private final PostsListAdapter adapter;
 
+    // Interface for defining post action listener methods
     public interface PostActionListener {
         void onLikeButtonClick(int position);
-
         void onCommentButtonClick(int position);
-
         void onDeletsButtonClick(int position, PostsListAdapter adapter);
-
         void onEditButtonClick(int position);
-
         void onShareButtonClick();
     }
 
+    // View holder class for managing individual post views
     class PostViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvAuthor;
         private final TextView tvContent;
@@ -46,7 +42,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         private final TextView commentCounter;
         private final TextView time;
 
-
+        // Constructor to initialize view elements
         private PostViewHolder(View itemView) {
             super(itemView);
             tvAuthor = itemView.findViewById(R.id.tvAuthor);
@@ -64,25 +60,30 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     }
 
     private final LayoutInflater mInflater;
-    private List<Post> posts;
+    private List<Post> posts; // List of posts to display
 
+    // Constructor to initialize the adapter
     public PostsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
         this.adapter = this;
     }
 
+    // Method to set the post action listener
     public void setPostActionListener(PostActionListener listener) {
         this.postActionsListener = listener;
     }
 
-    @NonNull
+    // Method to create a view holder for a post item
     @Override
-    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.activity_image_post, parent, false);
         return new PostViewHolder(itemView);
     }
-    // Inside PostsListAdapter class
+
+    // Method to bind data to a post item view
+    @Override
     public void onBindViewHolder(PostViewHolder holder, int position) {
+        // Set click listeners for various action buttons
         holder.editButton.setOnClickListener(v -> {
             if (postActionsListener != null) {
                 postActionsListener.onEditButtonClick(position);
@@ -91,59 +92,54 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         holder.share.setOnClickListener(v -> {
             if (postActionsListener != null) {
                 postActionsListener.onShareButtonClick();
-
             }
         });
-
         holder.deleteButton.setOnClickListener(v -> {
             if (postActionsListener != null) {
                 postActionsListener.onDeletsButtonClick(position, adapter);
             }
         });
         holder.commentButton.setOnClickListener(v -> postActionsListener.onCommentButtonClick(position));
-
-
         holder.likeButton.setOnClickListener(v -> {
             if (postActionsListener != null) {
                 postActionsListener.onLikeButtonClick(position);
             }
         });
+
+        // Bind post data to the view holder elements
         if (posts != null) {
             final Post current = posts.get(position);
             holder.time.setText(current.getTime());
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
             holder.AuthorPic.setImageBitmap(current.getAuthorPic());
-            int num;
-            if (current.getComments() == null) {
-                num = 0;
-            } else {
-                num = current.getComments().size();
-            }
+            int num = (current.getComments() == null) ? 0 : current.getComments().size();
             holder.commentCounter.setText(num + " comments");
+            //-1 is a flag that means we take pic from user(drawable)and not id
             if (current.getId() != -1) {
-                // If it's an integer, assume it's a drawable resource ID
                 holder.ivPic.setImageResource(current.getId());
                 holder.AuthorPic.setImageResource(current.getAuthorPicId());
                 holder.ivPic.setVisibility(View.VISIBLE);
             } else if (current.getuserpic() != null) {
-                // If it's a Drawable object
                 holder.ivPic.setImageDrawable(current.getuserpic());
                 holder.ivPic.setVisibility(View.VISIBLE);
             }
         }
     }
+
+    // Method to set the list of posts
     public void setPosts(List<Post> s) {
         posts = s;
         notifyDataSetChanged();
     }
+
+    // Method to get the total number of posts
     @Override
     public int getItemCount() {
-        if (posts != null)
-            return posts.size();
-        else return 0;
+        return (posts != null) ? posts.size() : 0;
     }
 
+    // Method to get the list of posts
     public List<Post> getPosts() {
         return posts;
     }
