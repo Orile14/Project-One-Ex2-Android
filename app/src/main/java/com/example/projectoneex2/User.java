@@ -29,7 +29,4 @@ public class User {
         return profileImage;
     }
 
-    public void setProfileImage(Bitmap profileImage) {
-        this.profileImage = profileImage;
-    }
 }

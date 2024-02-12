@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectoneex2.Comment;
@@ -61,37 +62,30 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
         this.commentListener = listener;
     }
 
+    @NonNull
     @Override
-    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.activity_comment, parent, false);
         return new PostViewHolder(itemView);
     }
 
     // Inside PostsListAdapter class
     public void onBindViewHolder(PostViewHolder holder, int position) {
-        holder.likeCounter.setText(String.valueOf(comments.get(position).getLikes())+" Likes");
-        holder.editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (commentListener != null) {
-                    commentListener.onCommentEditButtonClick(position,postPosition,adapter);
-                }
+
+        holder.likeCounter.setText(comments.get(position).getLikes() +" Likes");
+        holder.editButton.setOnClickListener(v -> {
+            if (commentListener != null) {
+                commentListener.onCommentEditButtonClick(position,postPosition,adapter);
             }
         });
-        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (commentListener != null) {
-                    commentListener.onCommentDeleteButtonClick(position,postPosition,adapter);
-                }
+        holder.deleteButton.setOnClickListener(v -> {
+            if (commentListener != null) {
+                commentListener.onCommentDeleteButtonClick(position,postPosition,adapter);
             }
         });
-        holder.likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (commentListener != null) {
-                    commentListener.onCommentLikeButtonClick(position,postPosition,adapter,holder.likeCounter);
-                }
+        holder.likeButton.setOnClickListener(v -> {
+            if (commentListener != null) {
+                commentListener.onCommentLikeButtonClick(position,postPosition,adapter,holder.likeCounter);
             }
         });
 
@@ -116,7 +110,5 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
         if (comments != null)
             return comments.size();
         else return 0;
-    }
-    public List<Comment> getPosts (){ return comments;
     }
 }

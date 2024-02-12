@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.projectoneex2.Post;
 import com.example.projectoneex2.R;
@@ -17,7 +19,7 @@ import java.util.List;
 public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.PostViewHolder> {
     private PostActionListener postActionsListener;
 
-    private PostsListAdapter adapter;
+    private final PostsListAdapter adapter;
 
     public interface PostActionListener {
         void onLikeButtonClick(int position);
@@ -40,9 +42,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         public ImageButton deleteButton;
         public ImageView AuthorPic;
         public Button share;
-        private Button commentButton;
-        private TextView commentCounter;
-        private TextView time;
+        private final Button commentButton;
+        private final TextView commentCounter;
+        private final TextView time;
 
 
         private PostViewHolder(View itemView) {
@@ -73,8 +75,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         this.postActionsListener = listener;
     }
 
+    @NonNull
     @Override
-    public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.activity_image_post, parent, false);
         return new PostViewHolder(itemView);
     }
@@ -123,9 +126,9 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
                 holder.ivPic.setImageResource(current.getId());
                 holder.AuthorPic.setImageResource(current.getAuthorPicId());
                 holder.ivPic.setVisibility(View.VISIBLE);
-            } else if (current.getuserpick() != null) {
+            } else if (current.getuserpic() != null) {
                 // If it's a Drawable object
-                holder.ivPic.setImageDrawable(current.getuserpick());
+                holder.ivPic.setImageDrawable(current.getuserpic());
                 holder.ivPic.setVisibility(View.VISIBLE);
             }
         }

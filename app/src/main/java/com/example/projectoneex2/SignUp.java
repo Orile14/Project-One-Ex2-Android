@@ -4,15 +4,12 @@ import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -34,10 +31,8 @@ public class SignUp extends AppCompatActivity {
     private EditText editTextNickname;
     private EditText editTextPassword;
     private EditText editTextRepeatPassword;
-    private Button btnSignUp;
     private Bitmap pic;
     private ImageView imageViewProfile;
-    private ToggleButton darkModeToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,34 +46,21 @@ public class SignUp extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickname=findViewById(R.id.editTextNickname);
         editTextRepeatPassword = findViewById(R.id.editTextRepeatPassword);
-        btnSignUp = findViewById(R.id.btnSignUp);
+        Button btnSignUp = findViewById(R.id.btnSignUp);
         imageViewProfile = findViewById(R.id.imageViewProfile);
-        darkModeToggle = findViewById(R.id.toggleButton);
+        ToggleButton darkModeToggle = findViewById(R.id.toggleButton);
         // Set toggle button state
         darkModeToggle.setChecked(isDarkTheme);
 
         // Set onClickListener for the signup button
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signupUser();
-            }
-        });
+        btnSignUp.setOnClickListener(view -> signupUser());
 
         // Set onClickListener for the profile image
-        imageViewProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openGallery();
-            }
-        });
-        darkModeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isDarkTheme = isChecked;
-                saveThemePreference();
-                recreate(); // Restart activity to apply theme changes
-            }
+        imageViewProfile.setOnClickListener(view -> openGallery());
+        darkModeToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isDarkTheme = isChecked;
+            saveThemePreference();
+            recreate(); // Restart activity to apply theme changes
         });
     }
 
@@ -95,18 +77,6 @@ public class SignUp extends AppCompatActivity {
         // Check if passwords match
         if (!password.equals(repeatPassword)) {
             showToast("Passwords do not match");
-            return;
-        }
-        if (nickname.isEmpty()){
-            showToast("please insert nickname");
-            return;
-        }
-        if (username.isEmpty()){
-            showToast("please insert username");
-            return;
-        }
-        if (password.isEmpty()){
-            showToast("please insert passwrod");
             return;
         }
 
@@ -137,20 +107,17 @@ public class SignUp extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SignUp.this);
         builder.setTitle("Choose Action");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (options[item].equals("Choose from Gallery")) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, REQUEST_IMAGE_PICK);
-                } else if (options[item].equals("Take a Picture")) {
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                    }
-                } else if (options[item].equals("Cancel")) {
-                    dialog.dismiss();
+        builder.setItems(options, (dialog, item) -> {
+            if (options[item].equals("Choose from Gallery")) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_IMAGE_PICK);
+            } else if (options[item].equals("Take a Picture")) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
+            } else if (options[item].equals("Cancel")) {
+                dialog.dismiss();
             }
         });
         builder.show();
@@ -172,7 +139,10 @@ public class SignUp extends AppCompatActivity {
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Bitmap imageBitmap = null;
+            if (extras != null) {
+                imageBitmap = (Bitmap) extras.get("data");
+            }
             imageViewProfile.setImageBitmap(imageBitmap);
             this.pic = imageBitmap;
         }

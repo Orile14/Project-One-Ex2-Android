@@ -7,9 +7,7 @@ import static com.example.projectoneex2.Login.userList;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,45 +16,28 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Menu extends AppCompatActivity {
-    private ImageView profilePic;
-    private Button Logout;
-    private ImageButton home;
-    private ToggleButton darkModeToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadThemePreference();
         applyTheme();
         setContentView(R.layout.activity_menu);
-        profilePic = findViewById(R.id.profileImage);
-        home=findViewById(R.id.imageButton2);
-        darkModeToggle = findViewById(R.id.toggleButton2);
+        ImageView profilePic = findViewById(R.id.profileImage);
+        ImageButton home = findViewById(R.id.imageButton2);
+        ToggleButton darkModeToggle = findViewById(R.id.toggleButton2);
         darkModeToggle.setChecked(isDarkTheme);
         profilePic.setImageBitmap(userList.get(0).getProfileImage());
         TextView textView = findViewById(R.id.username);
-        Logout = findViewById(R.id.Logout);
-        Logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                home();
-            }
-        });
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                feed();
-            }
-        });
+        Button logout = findViewById(R.id.Logout);
+        logout.setOnClickListener(view -> home());
+        home.setOnClickListener(view -> feed());
         textView.setText(userList.get(0).getNickname());
 
 
-        darkModeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isDarkTheme = isChecked;
-                saveThemePreference();
-                recreate(); // Restart activity to apply theme changes
-            }
+        darkModeToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isDarkTheme = isChecked;
+            saveThemePreference();
+            recreate(); // Restart activity to apply theme changes
         });
     }
 

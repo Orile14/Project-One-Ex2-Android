@@ -15,15 +15,14 @@ public interface Post {
     Bitmap getAuthorPic();
     int getLikes();
     void setLikes(int likes);
-    public List<Comment> getComments();
+    List<Comment> getComments();
     String getContent();
-    Bitmap getPic();
-    Drawable getuserpick();
+
+    Drawable getuserpic();
      void setUserpic(Drawable pic);
-    void setPic(Bitmap pic);
+
     void setContent(String content);
     void setId(int i);
-    void setAuthor(String author);
 
     void addComment(Comment comment);
 }

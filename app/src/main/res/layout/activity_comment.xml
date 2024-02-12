@@ -67,6 +67,8 @@
         android:layout_marginTop="8dp">
 
         <!-- Like Button -->
+
+        <!-- Edit Button -->
         <ImageButton
             android:id="@+id/likeButton"
             android:layout_width="0dp"
@@ -75,7 +77,6 @@
             android:scaleType="center"
             app:srcCompat="@drawable/ic_like" />
 
-        <!-- Edit Button -->
         <ImageButton
             android:id="@+id/imageButton6"
             android:layout_width="0dp"

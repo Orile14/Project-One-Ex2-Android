@@ -11,14 +11,14 @@ import java.util.List;
 
 @Entity
 public class imagePost extends AppCompatActivity implements Post {
-    private static final int EDIT_POST_REQUEST = 1; // Define your request code here
+    // Define your request code here
     private List<Comment> comments=new ArrayList<>();
     private boolean like=false;
     private int id=-1;
     int commentsNum=0;
-    private String author;
+    private final String author;
     private String content;
-    private String time;
+    private final String time;
     private int likes=0;
     private Bitmap AuthorPic;
     private int profileImage;
@@ -83,10 +83,6 @@ public class imagePost extends AppCompatActivity implements Post {
         return this.AuthorPic;
     }
 
-    public boolean getLike(boolean value) {
-        return this.like;
-    }
-
     public void setLikes(int likes) {
         this.likes = likes;
     }
@@ -95,17 +91,11 @@ public class imagePost extends AppCompatActivity implements Post {
         return content;
     }
 
-    public Bitmap getPic() {
-        return null;
-    }
-    public Drawable getuserpick() {
+    public Drawable getuserpic() {
         return userpic;
     }
 
 
-    public void setPic(Bitmap pic) {
-        return;
-    }
     public void setUserpic(Drawable pic) {
         this.userpic=pic;
     }
@@ -114,20 +104,10 @@ public class imagePost extends AppCompatActivity implements Post {
         this.content = content;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public List<Comment> getComments() {
         return comments;
     }
-    public int getCommentsNum(){
-        return commentsNum;
-    }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
     public void addComment(Comment comment) {
         if (this.comments==null){
             this.comments=new ArrayList<>();
