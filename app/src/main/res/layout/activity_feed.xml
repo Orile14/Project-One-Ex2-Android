@@ -44,7 +44,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="-2"
+                android:layout_margin="4dp"
 
+                android:background="@drawable/circular_border_background"
                 app:srcCompat="@drawable/ic_comment" />
 
 
@@ -53,6 +55,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
+                android:layout_margin="4dp"
+                android:background="@drawable/circular_border_background"
                 app:srcCompat="@drawable/ic_search"
                 app:tint="#0B0A0A" />
 
@@ -61,7 +65,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_margin="4dp"
                 app:tint="#131313"
+                android:background="@drawable/circular_border_background"
                 app:srcCompat="@drawable/ic_upload"
                  />
 
@@ -122,7 +128,7 @@
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:backgroundTint="#2D49E6"
+            android:backgroundTint="#1877F2"
             android:background="@drawable/facbook_radius"
             android:text="@string/share" />
 
@@ -163,23 +169,22 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:backgroundTint="#FFFCFC"
-        android:foregroundTint="#FFFBFB"
+        android:background="#1877F2"
         android:orientation="horizontal">
 
 
         <!-- Add your bottom navigation items here -->
+
 
         <ImageButton
             android:id="@+id/imageButton2"
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
+            android:background="@drawable/circular_border_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_home"
-            app:tint="#0781E3" />
-
-
+            app:tint="#000000" />
 
         <ImageButton
             android:id="@+id/imageButton3"
@@ -187,6 +192,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
+            android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_video"
             app:tint="#0E0E0E" />
 
@@ -195,7 +201,9 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
+            android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_notification"
+
             app:tint="#0E0E0E" />
 
 
@@ -204,8 +212,10 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
+            android:background="@drawable/circular_border_background"
             android:text="@string/togglebutton"
             app:srcCompat="@drawable/ic_mode"
+
             app:tint="#0E0E0E" />
 
         <ImageButton
@@ -213,7 +223,9 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:layout_weight="1"
+            android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_menu"
+
             app:tint="#0E0E0E" />
 
     </LinearLayout>
