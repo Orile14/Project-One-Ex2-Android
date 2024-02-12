@@ -1,123 +1,71 @@
 package com.example.projectoneex2;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Entity;
-
-import java.util.List;
-
-@Entity
-public class Comment extends AppCompatActivity implements Post {
-    private boolean like=false;
-    private String author;
+public class Comment extends AppCompatActivity {
+    // Comment attributes
+    private boolean like = false;
+    private final String author;
     private String content;
-    private int likes=0;
-    private Bitmap Authorpic;
-    private Drawable userpic=null;
+    private int likes = 0;
+    private Bitmap authorPic;
 
+    // Constructor to initialize a Comment object with a profile picture
     public Comment(String author, String content, Bitmap authorPic) {
         this.author = author;
-        this.content=content;
-        this.Authorpic=authorPic;
+        this.content = content;
+        this.authorPic = authorPic;
     }
 
-    public Comment(String author, String content, Drawable pic) {
+    // Constructor to initialize a Comment object without a profile picture
+    public Comment(String author, String content) {
         this.author = author;
-        this.content=content;
-
+        this.content = content;
     }
 
-
-    @Override
+    // Getter method for retrieving the comment's ID
     public int getId() {
-        return 0;
+        return 0; // Placeholder return value; actual implementation may vary
     }
 
+    // Getter method for retrieving the comment author's username
     public String getAuthor() {
         return author;
     }
 
-    @Override
-    public int getAuthorPicId() {
-        return 0;
-    }
-
-    public String getTime(){
-        return null;
-    }
-
-    @Override
+    // Getter method for retrieving the comment's like status
     public Boolean getLike() {
         return like;
     }
 
+    // Getter method for retrieving the number of likes for the comment
     public int getLikes() {
         return likes;
     }
+
+    // Setter method to set the comment's like status
     public void setLike(boolean value) {
         this.like = value;
     }
 
-    @Override
+    // Getter method for retrieving the comment author's profile picture
     public Bitmap getAuthorPic() {
-        return Authorpic;
+        return authorPic;
     }
 
-    public boolean getLike(boolean value) {
-        return this.like;
-    }
-
+    // Setter method to set the number of likes for the comment
     public void setLikes(int likes) {
         this.likes = likes;
     }
 
-    @Override
-    public List<Comment> getComments() {
-        return null;
-    }
-
-
-
+    // Getter method for retrieving the content of the comment
     public String getContent() {
         return content;
     }
 
-    public Bitmap getPic() {
-        return null;
-    }
-    public Drawable getuserpick() {
-        return userpic;
-    }
-
-    @Override
-    public void setUserpic(Drawable pic) {
-
-    }
-
-
-    public void setPic(Bitmap pic) {
-        return;
-    }
-
+    // Setter method to set the content of the comment
     public void setContent(String content) {
         this.content = content;
-    }
-
-    @Override
-    public void setId(int i) {
-
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-
-
-    @Override
-    public void addComment(Comment comment) {
-
     }
 }

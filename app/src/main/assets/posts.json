@@ -1,38 +1,77 @@
 [
   {
-    "author": "Rona",
-    "content": "nice sun",
-    "imageResourceId": "icons8_delete_192",
-    "profilePic": "ic_woman",
+    "author": "Rona Kadosh",
+    "content": "new cooking class, wish me luck!",
+    "imageResourceId": "cooking",
+    "profilePic": "rona",
     "time":"13:09"
   },
   {
-    "author": "Alice",
-    "content": "wonderul day!",
-    "imageResourceId": "ic_pic1",
+    "author": "Alice ripshtein",
+    "content": "just random pic, miss those days...",
+    "imageResourceId": "friends",
     "profilePic": "ic_woman",
     "time":"14:42"
   },
   {
-    "author": "Danni",
+    "author": "Danni Mizrahi",
     "content": "go Lakers!!!!",
-    "imageResourceId": "ic_pic_monkey",
+    "imageResourceId": "lakers_fog",
     "profilePic": "ic_danni",
     "time":"20:17"
   },
   {
-    "author": "Ori",
-    "content": "miss home...",
-    "imageResourceId": "ic_pic1",
-    "profilePic": "ic_shimon",
+    "author": "Ori avivi",
+    "content": "thailand is the best country in the world,period.",
+    "imageResourceId": "beach",
+    "profilePic": "ori1",
     "time":"08:00"
   },
   {
-    "author": "Shimon",
-    "content": "so funny lol",
-    "imageResourceId": "ic_pic_burger",
-    "profilePic": "ic_men_1",
+    "author": "Shimon Cohen",
+    "content": "what a view!i love it!",
+    "imageResourceId": "lake",
+    "profilePic": "ic_shimon",
     "time":"17:21"
 
+  },
+  {
+    "author": "Ori Avivi",
+    "content": "road trip!",
+    "imageResourceId": "horizon",
+    "profilePic": "ori1",
+    "time":"17:44"
+
+  },
+  {
+    "author": "Shiri Levy",
+    "content": "love coldplay so much!im so lucky!",
+    "imageResourceId": "coldplay",
+    "profilePic": "shiri1",
+    "time":"21:27"
+
+  },
+  {
+    "author": "Shimon Cohen",
+    "content": "me and the homies",
+    "imageResourceId": "men_friends",
+    "profilePic": "ic_shimon",
+    "time":"21:27"
+
+  },
+  {
+    "author": "Danni Mizrahi",
+    "content": "nothing like the big apple",
+    "imageResourceId": "newyork",
+    "profilePic": "ic_danni",
+    "time":"21:27"
+
+  },
+  {
+    "author": "Rona Kadosh",
+    "content": "god i just love ice cream so much",
+    "imageResourceId": "icecream",
+    "profilePic": "rona",
+    "time":"13:09"
   }
 ]

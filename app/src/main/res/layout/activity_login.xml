@@ -58,15 +58,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Password"
+            android:hint="@string/password"
             android:inputType="textPassword" />
 
         <Button
             android:id="@+id/buttonLogin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
+            android:backgroundTint="#1877F2"
             android:text="Login"
-            android:backgroundTint="#1877F2" />
+            android:background="@drawable/facbook_radius" />
+
 
     </LinearLayout>
 
@@ -87,10 +89,10 @@
         <Button
             android:id="@+id/btnSignup"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#FFFFFF"
-            android:textColor="#1877F2"
-            android:text="Create New Account" />
+            android:layout_height="35dp"
+            android:background="@drawable/facbook_radius"
+            android:text="@string/create_new_account"
+            android:textColor="#1877F2" />
 
         <ImageView
             android:id="@+id/imageView7"

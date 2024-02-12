@@ -1,11 +1,11 @@
 <resources>
-    <style name="AppTheme.Light" parent="Theme.AppCompat.Light">
+    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Other theme attributes -->
         <item name="colorPrimary">@color/white</item>
         <!-- Define other attributes for light theme -->
     </style>
 
-    <style name="AppTheme.Dark" parent="Theme.AppCompat">
+    <style name="AppTheme.Dark" parent="Theme.AppCompat.NoActionBar">
         <!-- Override attributes for dark theme -->
         <item name="colorPrimary">@color/black</item>
         <!-- Define other attributes for dark theme -->
