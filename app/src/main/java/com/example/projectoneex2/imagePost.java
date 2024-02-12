@@ -62,9 +62,9 @@ public class imagePost extends AppCompatActivity implements Post {
         return this.profileImage;
     }
 
-   public String getTime(){
+    public String getTime(){
         return time;
-   }
+    }
 
     @Override
     public Boolean getLike() {

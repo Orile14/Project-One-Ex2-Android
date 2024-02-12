@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class Menu extends AppCompatActivity {
     private ImageView profilePic;
     private Button Logout;
+    private ImageButton home;
     private ToggleButton darkModeToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +29,7 @@ public class Menu extends AppCompatActivity {
         applyTheme();
         setContentView(R.layout.activity_menu);
         profilePic = findViewById(R.id.profileImage);
+        home=findViewById(R.id.imageButton2);
         darkModeToggle = findViewById(R.id.toggleButton2);
         darkModeToggle.setChecked(isDarkTheme);
         profilePic.setImageBitmap(userList.get(0).getProfileImage());
@@ -38,7 +41,13 @@ public class Menu extends AppCompatActivity {
                 home();
             }
         });
-        textView.setText(userList.get(0).getUsername());
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                feed();
+            }
+        });
+        textView.setText(userList.get(0).getNickname());
 
 
         darkModeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -53,6 +62,10 @@ public class Menu extends AppCompatActivity {
 
     private void home() {
         Intent i = new Intent(this, Login.class);
+        startActivity(i);
+    }
+    private void feed() {
+        Intent i = new Intent(this, feedActivity.class);
         startActivity(i);
     }
     private void loadThemePreference() {

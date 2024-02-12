@@ -121,8 +121,9 @@
         <Button
             android:id="@+id/button3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:backgroundTint="#2D49E6"
+            android:background="@drawable/facbook_radius"
             android:text="Share" />
 
     </LinearLayout>

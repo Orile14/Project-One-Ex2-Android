@@ -31,6 +31,7 @@ public class SignUp extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private EditText editTextUsername;
+    private EditText editTextNickname;
     private EditText editTextPassword;
     private EditText editTextRepeatPassword;
     private Button btnSignUp;
@@ -48,6 +49,7 @@ public class SignUp extends AppCompatActivity {
         // Initialize views
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
+        editTextNickname=findViewById(R.id.editTextNickname);
         editTextRepeatPassword = findViewById(R.id.editTextRepeatPassword);
         btnSignUp = findViewById(R.id.btnSignUp);
         imageViewProfile = findViewById(R.id.imageViewProfile);
@@ -83,12 +85,28 @@ public class SignUp extends AppCompatActivity {
     private void signupUser() {
         String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
+        String nickname=editTextNickname.getText().toString();
         String repeatPassword = editTextRepeatPassword.getText().toString();
-
+        if (username.isEmpty() || password.isEmpty() || nickname.isEmpty() || repeatPassword.isEmpty()) {
+            showToast("All fields are required");
+            return;
+        }
 
         // Check if passwords match
         if (!password.equals(repeatPassword)) {
             showToast("Passwords do not match");
+            return;
+        }
+        if (nickname.isEmpty()){
+            showToast("please insert nickname");
+            return;
+        }
+        if (username.isEmpty()){
+            showToast("please insert username");
+            return;
+        }
+        if (password.isEmpty()){
+            showToast("please insert passwrod");
             return;
         }
 
@@ -99,9 +117,13 @@ public class SignUp extends AppCompatActivity {
                 return;
             }
         }
+        if (pic == null) {
+            showToast("Profile picture is required");
+            return;
+        }
 
         // Add the new user to the list
-        Login.userList.add(new User(username, password,this.pic));
+        Login.userList.add(new User(username, password,this.pic,nickname));
         Intent i=new Intent(SignUp.this, Login.class);
         startActivity(i);
         // Display a success message

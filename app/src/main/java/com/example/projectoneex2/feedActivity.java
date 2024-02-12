@@ -60,9 +60,9 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     private Bitmap selectedBitmap;
     private ImageButton menuButton;
     private ImageButton editImage;
-    private List<Post> posts;
+    private static List<Post> posts;
     private PostsListAdapter adapter;
-    private String username;
+    private String nickname;
     private Drawable d;
     private ToggleButton darkModeToggle;
 
@@ -86,8 +86,9 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         adapter.setPostActionListener(this);
         lstPosts.setAdapter(adapter);
         lstPosts.setLayoutManager(new LinearLayoutManager(this));
-        username = getIntent().getStringExtra("USERNAME");
-        initPosts();
+        nickname = userList.get(0).getNickname();
+        if (posts==null){
+        initPosts();}
         adapter.setPosts(posts);
         editPost = findViewById(R.id.edtWhatsOnYourMindMiddle);
         btnAdd = findViewById(R.id.button3);
@@ -130,9 +131,8 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Do nothing here, as you want it to do nothing when refreshed
-                refreshLayout.setPressed(false);
-                return;// Stop the refreshing indicator
+                // Stop the refreshing indicator
+                refreshLayout.setRefreshing(false);
             }
         });
 
@@ -259,11 +259,11 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
             imageViewProfile.setImageResource(R.drawable.ic_white_foreground);
             Drawable empty=imageViewProfile.getDrawable();
             empty.setBounds(0,0,0,0);
-            imagePost p = new imagePost(username, post, empty,userList.get(0).getProfileImage(),timeString);
+            imagePost p = new imagePost(nickname, post, empty,userList.get(0).getProfileImage(),timeString);
             p.setAuthorPic(userList.get(0).getProfileImage());
             posts.add(0, p);
         } else {
-            imagePost p = new imagePost(username, post, pic,userList.get(0).getProfileImage(),timeString);
+            imagePost p = new imagePost(nickname, post, pic,userList.get(0).getProfileImage(),timeString);
             posts.add(0, p);
             share=false;
         }
@@ -287,13 +287,19 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     public void onEditButtonClick(int position) {
         Post post = posts.get(position);
-        if (!Objects.equals(post.getAuthor(), userList.get(0).getUsername())){
+        if (!Objects.equals(post.getAuthor(), userList.get(0).getNickname())){
             showToast("you cant edit post that are not yours!");
             return;
         }
         showEditDialog(position);
 
     }
+
+    @Override
+    public void onShareButtonClick() {
+        openMenu();
+    }
+
     public void onCommentButtonClick(int position) {
         showCommentDialog(position);
 
@@ -320,6 +326,13 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         AlertDialog dialog = builder.create();
         dialog.show();
         FloatingActionButton exit = dialogView.findViewById(R.id.floatingActionButton4);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Stop the refreshing indicator
+                refreshLayout.setRefreshing(false);
+            }
+        });
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -358,7 +371,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 String updatedContent = editText.getText().toString().trim();
                 // Update the post
                 Post post = posts.get(position);
-                post.addComment(new Comment(username, updatedContent, userList.get(0).getProfileImage()));
+                post.addComment(new Comment(nickname, updatedContent, userList.get(0).getProfileImage()));
                 adapter1.notifyDataSetChanged();
 
             }
@@ -400,8 +413,8 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Update the post
                 Post post = posts.get(position);
                 post.setContent(updatedContent);
-                    post.setId(-1);
-                    post.setUserpic(d);
+                post.setId(-1);
+                post.setUserpic(d);
                 // Refresh the UI
                 adapter.notifyDataSetChanged();
             }
@@ -488,7 +501,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 this.d = bitmapToDrawable(selectedBitmap);
                 Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 400, 400, true);
                 imageViewProfile.setImageBitmap(resizedBitmap);
-                 resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 600, 400, true);
+                resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, 600, 400, true);
                 if (editImage!=null) {
                     editImage.setImageBitmap(resizedBitmap);
                 }
