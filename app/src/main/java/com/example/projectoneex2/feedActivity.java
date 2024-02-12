@@ -109,53 +109,70 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
 
     }
 
+    // Define a method to open the menu activity
     private void openMenu() {
+        // Create an intent to start the Menu activity
         Intent i = new Intent(this, Menu.class);
+        // Start the activity
         startActivity(i);
     }
+
+    // Define a method to load the theme preference from SharedPreferences
     private void loadThemePreference() {
+        // Get SharedPreferences instance
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        isDarkTheme = sharedPreferences.getBoolean(PREF_THEME_KEY, false); // Default is light theme
+        // Load the theme preference (default is light theme)
+        isDarkTheme = sharedPreferences.getBoolean(PREF_THEME_KEY, false);
     }
+
+    // Define a method to apply the selected theme
     private void applyTheme() {
+        // Apply the selected theme based on the theme preference
         setTheme(isDarkTheme ? R.style.AppTheme_Dark : R.style.AppTheme_Light);
     }
+
+    // Define a method to save the theme preference to SharedPreferences
     private void saveThemePreference() {
+        // Save the current theme preference
         sharedPreferences.edit().putBoolean(PREF_THEME_KEY, isDarkTheme).apply();
     }
 
+    // Define a method to initialize posts from a JSON file
     private void initPosts() {
         try {
+            // Open the JSON file containing posts
             InputStream inputStream = getAssets().open("posts.json");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder stringBuilder = new StringBuilder();
             String line;
+            // Read each line of the JSON file
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuilder.append(line);
             }
             bufferedReader.close();
             inputStream.close();
-
+            // Convert JSON data to string
             String jsonData = stringBuilder.toString();
+            // Create a JSONArray from the JSON string
             JSONArray jsonArray = new JSONArray(jsonData);
-
+            // Initialize the list of posts
             posts = new ArrayList<>();
-
+            // Iterate through the JSON array
             for (int i = 0; i < jsonArray.length(); i++) {
+                // Get each JSON object from the array
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-
+                // Extract data from JSON object
                 String author = jsonObject.getString("author");
                 String content = jsonObject.getString("content");
                 String time = jsonObject.getString("time");
+                // Get the resource IDs for image and profile picture
                 int imageResourceId = getResources().getIdentifier(jsonObject.getString("imageResourceId"), "drawable", getPackageName());
-                int profilePic=getResources().getIdentifier(jsonObject.getString("profilePic"), "drawable", getPackageName());
+                int profilePic = getResources().getIdentifier(jsonObject.getString("profilePic"), "drawable", getPackageName());
                 // Create a Post object with the extracted data
-                Post new_post = new imagePost(author, content, imageResourceId,profilePic,time);
-
+                Post new_post = new imagePost(author, content, imageResourceId, profilePic, time);
                 // Add the Post object to the list
                 posts.add(new_post);
             }
-
             // Now you have a list of Post objects parsed from the JSON data.
             // You can use this list in your app as needed.
         } catch (JSONException e) {
@@ -164,7 +181,6 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
             throw new RuntimeException(e);
         }
     }
-
     // Define a method to initiate a search
     private void search() {
         // Create an AlertDialog builder
@@ -174,7 +190,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         // Inflate the dialog_edit_comment layout which is like the search
         View dialogView = inflater.inflate(R.layout.dialog_edit_comment, null);
         EditText e=dialogView.findViewById(R.id.editText);
-        e.setText("search");
+        e.setHint("search");
         // Set the custom layout to the dialog builder
         builder.setView(dialogView);
         // Set negative button (Cancel) click listener to hide the dialog
@@ -360,7 +376,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
         builder.setView(dialogView);
         // Find the EditText in the custom layout
         final EditText editText = dialogView.findViewById(R.id.editText);
-        editText.setText("type your comment");
+        editText.setHint("type your comment");
         // Set positive button (Save) click listener
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override

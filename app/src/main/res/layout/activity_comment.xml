@@ -74,24 +74,27 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:backgroundTint="#1877F2"
             android:scaleType="center"
             app:srcCompat="@drawable/ic_like" />
 
+        <!-- Delete Button -->
         <ImageButton
             android:id="@+id/imageButton6"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
 
+            android:backgroundTint="#1877F2"
             app:srcCompat="@drawable/ic_edit" />
 
-        <!-- Delete Button -->
         <ImageButton
             android:id="@+id/imageButton12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
 
+            android:backgroundTint="#1877F2"
             app:srcCompat="@drawable/ic_garbage" />
 
     </LinearLayout>
