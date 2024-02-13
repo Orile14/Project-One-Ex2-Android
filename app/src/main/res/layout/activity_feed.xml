@@ -207,17 +207,6 @@
             app:tint="#0E0E0E" />
 
 
-        <ToggleButton
-            android:id="@+id/toggleButton3"
-            android:layout_width="0dp"
-            android:layout_height="70dp"
-            android:layout_weight="1"
-            android:background="@drawable/circular_border_background"
-            android:text="@string/togglebutton"
-            app:srcCompat="@drawable/ic_mode"
-
-            app:tint="#0E0E0E" />
-
         <ImageButton
             android:id="@+id/menuButton"
             android:layout_width="0dp"
@@ -225,7 +214,15 @@
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_menu"
+            app:tint="#0E0E0E" />
 
+
+        <ToggleButton
+            android:id="@+id/toggleButton3"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:background="@drawable/circular_border_background"
             app:tint="#0E0E0E" />
 
     </LinearLayout>
