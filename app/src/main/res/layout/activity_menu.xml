@@ -200,7 +200,7 @@
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:background="#1877F2"
         android:orientation="horizontal">
@@ -209,7 +209,7 @@
         <ImageButton
             android:id="@+id/imageButton2"
             android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -220,7 +220,7 @@
             android:id="@+id/imageButton3"
             style="@style/Widget.AppCompat.ImageButton"
             android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_video"
@@ -229,7 +229,7 @@
         <ImageButton
             android:id="@+id/imageButton4"
             android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_notification"
@@ -240,17 +240,17 @@
         <ImageButton
             android:id="@+id/menuButton"
             android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_menu"
 
-            app:tint="#0E0E0E" />
+            app:tint="#FFFFFF" />
 
         <ToggleButton
             android:id="@+id/toggleButton2"
             android:layout_width="0dp"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
             android:text="@string/togglebutton"
