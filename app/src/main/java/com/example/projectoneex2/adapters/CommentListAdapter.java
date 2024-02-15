@@ -15,12 +15,12 @@ import java.util.List;
 
 // Adapter class for managing the display of comments in a RecyclerView
 public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.PostViewHolder> {
-    private commentActionsListener commentListener; // Listener for comment actions
+    private CommentActionsListener commentListener; // Listener for comment actions
     int postPosition; // Position of the post associated with the comments
     CommentListAdapter adapter = this;
 
     // Interface for defining comment action listener methods
-    public interface commentActionsListener {
+    public interface CommentActionsListener {
         void onCommentEditButtonClick(int position, int postPosition, CommentListAdapter adapter);
         void onCommentDeleteButtonClick(int position, int postPosition, CommentListAdapter adapter);
         void onCommentLikeButtonClick(int position, int postPosition, CommentListAdapter adapter, TextView likeCounter);
@@ -59,7 +59,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
     }
 
     // Method to set the comment action listener
-    public void setOnEditButtonClickListener(commentActionsListener listener) {
+    public void setOnEditButtonClickListener(CommentActionsListener listener) {
         this.commentListener = listener;
     }
 

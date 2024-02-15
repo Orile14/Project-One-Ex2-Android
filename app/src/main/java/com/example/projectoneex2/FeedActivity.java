@@ -48,7 +48,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
-public class feedActivity extends AppCompatActivity implements PostsListAdapter.PostActionListener, CommentListAdapter.commentActionsListener {
+public class FeedActivity extends AppCompatActivity implements PostsListAdapter.PostActionListener, CommentListAdapter.CommentActionsListener {
     private static final int REQUEST_IMAGE_PICK = 2;
     boolean share;
     private EditText editPost;
@@ -176,7 +176,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 int imageResourceId = getResources().getIdentifier(jsonObject.getString("imageResourceId"), "drawable", getPackageName());
                 int profilePic = getResources().getIdentifier(jsonObject.getString("profilePic"), "drawable", getPackageName());
                 // Create a Post object with the extracted data
-                Post new_post = new imagePost(author, content, imageResourceId, profilePic, time);
+                Post new_post = new ImagePost(author, content, imageResourceId, profilePic, time);
                 // Add the Post object to the list
                 posts.add(new_post);
             }
@@ -260,14 +260,14 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
             // Set bounds to 0 to hide the image
             empty.setBounds(0, 0, 0, 0);
             // Create a new post object with the username, post content, and empty image
-            imagePost newPost = new imagePost(nickname, postText, empty, userList.get(0).getProfileImage(), timeString);
+            ImagePost newPost = new ImagePost(nickname, postText, empty, userList.get(0).getProfileImage(), timeString);
             // Set the author's profile picture
             newPost.setAuthorPic(userList.get(0).getProfileImage());
             // Add the new post at the beginning of the list
             posts.add(0, newPost);
         } else {
             // If it's a shared post, add a new post with the username, post content, and selected image
-            imagePost newPost = new imagePost(nickname, postText, postImage, userList.get(0).getProfileImage(), timeString);
+            ImagePost newPost = new ImagePost(nickname, postText, postImage, userList.get(0).getProfileImage(), timeString);
             // Add the new post at the beginning of the list
             posts.add(0, newPost);
             // Reset the share flag
@@ -451,7 +451,7 @@ public class feedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Set a temporary ID (-1 indicates an user image post)
                 post.setId(-1);
                 // Set the user profile picture to the selected image
-                post.setUserpic(d);
+                post.setUserPic(d);
                 // Refresh the UI by notifying the adapter of the data change
                 adapter.notifyDataSetChanged();
             }

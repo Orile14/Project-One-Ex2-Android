@@ -63,7 +63,7 @@ public class Login extends AppCompatActivity {
         // Display a message based on login success or failure
         if (userExists) {
             // Redirect to feedActivity if login successful
-            Intent i = new Intent(this, feedActivity.class);
+            Intent i = new Intent(this, FeedActivity.class);
             i.putExtra("USERNAME", username);
             startActivity(i);
         } else {

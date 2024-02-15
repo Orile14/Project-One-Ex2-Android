@@ -54,7 +54,7 @@ public class Menu extends AppCompatActivity {
     }
     // Method to navigate to the feed activity
     private void feed() {
-        Intent i = new Intent(this, feedActivity.class);
+        Intent i = new Intent(this, FeedActivity.class);
         startActivity(i);
     }
     // Method to load theme preference from SharedPreferences
