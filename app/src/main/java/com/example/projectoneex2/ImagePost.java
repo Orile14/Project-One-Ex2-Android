@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Entity annotation to define this class as an entity for Room database
-public class imagePost extends AppCompatActivity implements Post {
+public class ImagePost extends AppCompatActivity implements Post {
     // Define your request code here
     private List<Comment> comments = new ArrayList<>(); // List to store comments for this post
     private boolean like = false; // Indicates if the post is liked
@@ -21,7 +21,7 @@ public class imagePost extends AppCompatActivity implements Post {
     private Drawable userpic = null;
 
     // Constructor for posts with an existing ID and profile image resource ID
-    public imagePost(String author, String content, int id, int profileImage, String time) {
+    public ImagePost(String author, String content, int id, int profileImage, String time) {
         this.author = author;
         this.id = id;
         this.content = content;
@@ -30,7 +30,7 @@ public class imagePost extends AppCompatActivity implements Post {
     }
 
     // Constructor for posts with profile picture as Bitmap
-    public imagePost(String author, String content, Drawable pic, Bitmap profileImage, String time) {
+    public ImagePost(String author, String content, Drawable pic, Bitmap profileImage, String time) {
         this.author = author;
         this.content = content;
         this.userpic = pic;
@@ -102,12 +102,12 @@ public class imagePost extends AppCompatActivity implements Post {
     }
 
     // Getter method for user's profile picture as Drawable
-    public Drawable getuserpic() {
+    public Drawable getUserPic() {
         return userpic;
     }
 
     // Setter method for user's profile picture as Drawable
-    public void setUserpic(Drawable pic) {
+    public void setUserPic(Drawable pic) {
         this.userpic = pic;
     }
 

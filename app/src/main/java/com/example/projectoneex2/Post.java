@@ -40,10 +40,10 @@ public interface Post {
     String getContent();
 
     // Method to get the user's profile picture as Drawable
-    Drawable getuserpic();
+    Drawable getUserPic();
 
     // Method to set the user's profile picture as Drawable
-    void setUserpic(Drawable pic);
+    void setUserPic(Drawable pic);
 
     // Method to set the content of the post
     void setContent(String content);

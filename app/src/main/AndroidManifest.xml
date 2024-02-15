@@ -16,16 +16,13 @@
             android:name=".Menu"
             android:exported="false" />
         <activity
-            android:name=".imagePost"
-            android:exported="false" />
-        <activity
-            android:name=".EditActivty"
+            android:name=".ImagePost"
             android:exported="false" />
         <activity
             android:name=".Comment"
             android:exported="false" />
         <activity
-            android:name=".feedActivity"
+            android:name=".FeedActivity"
             android:exported="false" />
         <activity
             android:name=".SignUp"

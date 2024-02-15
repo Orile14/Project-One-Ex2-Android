@@ -120,8 +120,8 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
                 holder.ivPic.setImageResource(current.getId());
                 holder.AuthorPic.setImageResource(current.getAuthorPicId());
                 holder.ivPic.setVisibility(View.VISIBLE);
-            } else if (current.getuserpic() != null) {
-                holder.ivPic.setImageDrawable(current.getuserpic());
+            } else if (current.getUserPic() != null) {
+                holder.ivPic.setImageDrawable(current.getUserPic());
                 holder.ivPic.setVisibility(View.VISIBLE);
             }
         }
