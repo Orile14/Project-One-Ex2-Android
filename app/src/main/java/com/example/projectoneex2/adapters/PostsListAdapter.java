@@ -9,7 +9,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.projectoneex2.Post;
+
+import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.R;
 import java.util.List;
 
@@ -40,6 +41,8 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         public Button share;
         private final Button commentButton;
         private final TextView commentCounter;
+        private final TextView likeCounter;
+
         private final TextView time;
 
         // Constructor to initialize view elements
@@ -54,13 +57,14 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             AuthorPic = itemView.findViewById(R.id.imageViewPic);
             deleteButton = itemView.findViewById(R.id.postDeleteButton);
             commentCounter = itemView.findViewById(R.id.commentCounter);
+            likeCounter = itemView.findViewById(R.id.likeCounter);
             time = itemView.findViewById(R.id.time);
             share = itemView.findViewById(R.id.shareButton);
         }
     }
 
     private final LayoutInflater mInflater;
-    private List<Post> posts; // List of posts to display
+    private List<ImagePost> posts; // List of posts to display
 
     // Constructor to initialize the adapter
     public PostsListAdapter(Context context) {
@@ -108,30 +112,41 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
 
         // Bind post data to the view holder elements
         if (posts != null) {
-            final Post current = posts.get(position);
+            final ImagePost current = posts.get(position);
+            holder.likeCounter.setText(current.getLikes() + " likes");
             holder.time.setText(current.getTime());
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
-            holder.AuthorPic.setImageBitmap(current.getAuthorPic());
-            int num = (current.getComments() == null) ? 0 : current.getComments().size();
+            holder.AuthorPic.setImageBitmap(current.getAuthorPicBit());
+            int num = (current.getCommentsList() == null) ? 0 : current.getCommentsList().size();
             holder.commentCounter.setText(num + " comments");
             //-1 is a flag that means we take pic from user(drawable)and not id
-            if (current.getId() != -1) {
-                holder.ivPic.setImageResource(current.getId());
+            if (current.getPicID() != -1) {
+                holder.ivPic.setImageResource(current.getPicID());
                 holder.AuthorPic.setImageResource(current.getAuthorPicId());
                 holder.ivPic.setVisibility(View.VISIBLE);
-            } else if (current.getUserPic() != null) {
-                holder.ivPic.setImageDrawable(current.getUserPic());
+            } else if (current.getUserPicDraw() != null) {
+                holder.ivPic.setImageDrawable(current.getUserPicDraw());
                 holder.ivPic.setVisibility(View.VISIBLE);
             }
         }
     }
 
     // Method to set the list of posts
-    public void setPosts(List<Post> s) {
-        posts = s;
-        notifyDataSetChanged();
+    public void setPosts(List<ImagePost> s) {
+        if (posts!=null) {
+            posts.clear(); // Clear the existing list
+            for (int i = s.size() - 1; i >= 0; i--) {
+                posts.add(s.get(i)); // Add elements from 's' in reverse order
+            }
+            notifyDataSetChanged();
+        }
+        else {
+            posts = s;
+            notifyDataSetChanged();
+        }
     }
+
 
     // Method to get the total number of posts
     @Override
@@ -140,7 +155,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     }
 
     // Method to get the list of posts
-    public List<Post> getPosts() {
+    public List<ImagePost> getPosts() {
         return posts;
     }
 }

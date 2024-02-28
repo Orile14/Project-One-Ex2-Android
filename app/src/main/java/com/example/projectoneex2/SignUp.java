@@ -16,6 +16,10 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.projectoneex2.viewmodel.UserViewModel;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -24,7 +28,7 @@ public class SignUp extends AppCompatActivity {
     public static ArrayList<User> userList = new ArrayList<>();
     private static final int REQUEST_IMAGE_PICK = 2;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-
+    private UserViewModel viewModel=null;
     // Views
     private EditText editTextUsername;
     private EditText editTextNickname;
@@ -82,12 +86,10 @@ public class SignUp extends AppCompatActivity {
                 return;
             }
         }
-        if (pic == null) {
-            showToast("Profile picture is required");
-            return;
-        }
         // Add the new user to the list
-        Login.userList.add(new User(username, password,this.pic,nickname));
+        User a=new User(username, password,this.pic,nickname);
+        viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        viewModel.SignUp(a);
         Intent i=new Intent(SignUp.this, Login.class);
         startActivity(i);
         // Display a success message

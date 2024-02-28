@@ -7,16 +7,24 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.projectoneex2.viewmodel.UserViewModel;
+
 import java.util.ArrayList;
+import java.util.Objects;
+
 // Class responsible for user login functionality
 public class Login extends AppCompatActivity {
 
     public static ArrayList<User> userList = new ArrayList<>();
+    private UserViewModel viewModel=null;
     private EditText editTextUsername;
     private EditText editTextPassword;
     public static boolean isDarkTheme = false;
     public static final String PREF_THEME_KEY = "theme_preference";
     public static SharedPreferences sharedPreferences;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +34,7 @@ public class Login extends AppCompatActivity {
         applyTheme();
         // Set layout
         setContentView(R.layout.activity_login);
+        viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         // Initialize views
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
@@ -50,21 +59,30 @@ public class Login extends AppCompatActivity {
     }
     // Method to handle user login
     private void loginUser() {
+        final Boolean[] loginStatus = new Boolean[1];
         String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
-        // Check if the user exists in the list
-        boolean userExists = false;
-        for (User user : userList) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                userExists = true;
-                break;
-            }
+        if (viewModel==null) {
+            this.viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         }
-        // Display a message based on login success or failure
-        if (userExists) {
+        viewModel.getToken(username, password).observe(this, token1 -> {
+            token= token1;
+            if (!Objects.equals(token, "")&&token!=null){
+                loginMove(token);
+            }
+            if (token==null){
+                showToast();
+            }
+            token="";
+        });
+
+    }
+
+        private void loginMove(String s) {
+        if (!Objects.equals(s, "")) {
             // Redirect to feedActivity if login successful
             Intent i = new Intent(this, FeedActivity.class);
-            i.putExtra("USERNAME", username);
+            i.putExtra("TOKEN_KEY", token);
             startActivity(i);
         } else {
             // Show a toast message for invalid username or password

@@ -1,55 +1,143 @@
 package com.example.projectoneex2;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Base64;
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 // Entity annotation to define this class as an entity for Room database
-public class ImagePost extends AppCompatActivity implements Post {
+@Entity(tableName = "image_posts")
+public class ImagePost   {
+    @PrimaryKey (autoGenerate = true)
+    private String id;
     // Define your request code here
-    private List<Comment> comments = new ArrayList<>(); // List to store comments for this post
+    private List<Comment> comments = new ArrayList<>();
     private boolean like = false; // Indicates if the post is liked
-    private int id = -1;
+    private int picID = -1;
+    private int postOwnerID;
     int commentsNum = 0;
     private final String author;
     private String content;
     private final String time;
     private int likes = 0;
-    private Bitmap AuthorPic;
+    private String AuthorPic;
     private int profileImage;
-    private Drawable userpic = null;
+    private String userpic = null;
 
     // Constructor for posts with an existing ID and profile image resource ID
     public ImagePost(String author, String content, int id, int profileImage, String time) {
         this.author = author;
-        this.id = id;
+        this.picID = id;
         this.content = content;
         this.profileImage = profileImage;
         this.time = time;
     }
 
     // Constructor for posts with profile picture as Bitmap
-    public ImagePost(String author, String content, Drawable pic, Bitmap profileImage, String time) {
+    public ImagePost(String author, String content, String pic, String profileImage, String time) {
         this.author = author;
         this.content = content;
         this.userpic = pic;
         this.AuthorPic = profileImage;
         this.time = time;
     }
+    public ImagePost(String author, String content, String pic, String profileImage, String time,String id) {
+        this.author = author;
+        this.content = content;
+        this.userpic = pic;
+        this.AuthorPic = profileImage;
+        this.time = time;
+        this.id=id;
+    }
+    @TypeConverter
+    public String fromList(List<Comment> countryLang) {
+        if (countryLang == null) {
+            return (null);
+        }
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Comment>>() {}.getType();
+        String json = gson.toJson(countryLang, type);
+        return json;
+    }
+
+    @TypeConverter
+    public List<Comment> fromString(String countryLangString) {
+        if (countryLangString == null) {
+            return (null);
+        }
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Comment>>() {}.getType();
+        List<Comment> countryLangList = gson.fromJson(countryLangString, type);
+        return countryLangList;
+    }
 
     // Getter method for post ID
-    public int getId() {
+    public int getPicID() {
+        return picID;
+    }
+    public static String bitmapToString(Bitmap bitmap) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] bytes = outputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+    public static Bitmap stringToBitmap(String encodedString) {
+        String[] parts = encodedString.split(",");
+        if (parts.length != 2) {
+            // Handle invalid base64 string
+            return null;
+        }
+        String base64Data = parts[1];
+        byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+    public static String drawableToString(Drawable drawable) {
+        Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] bytes = outputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+    public static Drawable stringToDrawable(String encodedString) {
+        String[] parts = encodedString.split(",");
+        if (parts.length != 2) {
+            // Handle invalid base64 string
+            return null;
+        }
+        String base64Data = parts[1];
+        byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return new BitmapDrawable(bitmap);
+    }
+    // Setter method for post ID
+    public void setPicID(int i) {
+        this.picID = i;
+    }
+    public String getAuthorPic() {
+        return AuthorPic;
+    }
+
+    public String getId() {
         return id;
     }
 
-    // Setter method for post ID
-    public void setId(int i) {
-        this.id = i;
-    }
-
     // Setter method for author's profile picture as Bitmap
-    public void setAuthorPic(Bitmap authorPic) {
+    public void setAuthorPicBit(Bitmap authorPic) {
+        this.AuthorPic = bitmapToString(authorPic);
+    }
+    public void setAuthorPic(String authorPic) {
         this.AuthorPic = authorPic;
     }
 
@@ -59,7 +147,7 @@ public class ImagePost extends AppCompatActivity implements Post {
     }
 
     // Getter method for profile image resource ID
-    @Override
+
     public int getAuthorPicId() {
         return this.profileImage;
     }
@@ -70,7 +158,7 @@ public class ImagePost extends AppCompatActivity implements Post {
     }
 
     // Getter method for like status of the post
-    @Override
+
     public Boolean getLike() {
         return like;
     }
@@ -86,9 +174,9 @@ public class ImagePost extends AppCompatActivity implements Post {
     }
 
     // Getter method for author's profile picture as Bitmap
-    @Override
-    public Bitmap getAuthorPic() {
-        return this.AuthorPic;
+
+    public Bitmap getAuthorPicBit() {
+        return stringToBitmap(this.AuthorPic);
     }
 
     // Setter method for number of likes for the post
@@ -101,35 +189,71 @@ public class ImagePost extends AppCompatActivity implements Post {
         return content;
     }
 
+    public int getProfileImage() {
+        return profileImage;
+    }
+
     // Getter method for user's profile picture as Drawable
-    public Drawable getUserPic() {
+    public Drawable getUserPicDraw() {
+        return stringToDrawable(userpic);
+    }
+    public String getUserpic() {
         return userpic;
     }
 
     // Setter method for user's profile picture as Drawable
-    public void setUserPic(Drawable pic) {
+    public void setUserpicDraw(Drawable pic) {
+        this.userpic = drawableToString(pic);
+    }
+    public void setUserpic(String pic) {
         this.userpic = pic;
     }
+
+
+
 
     // Setter method for post content
     public void setContent(String content) {
         this.content = content;
     }
-
-    // Getter method for list of comments for the post
-    public List<Comment> getComments() {
+    public List<Comment> getComments(){
         return comments;
     }
+
+    public List<Comment> getCommentsList() {
+        return comments;
+    }
+    public void editComment(int id,String content){
+        // Add the comment to the beginning of the comments list
+       Comment c= comments.get(id);
+       c.setContent(content);
+    }
+
+
 
     // Method to add a comment to the post
     public void addComment(Comment comment) {
         // Check if the comments list is null
         if (this.comments == null) {
-            this.comments = new ArrayList<>();
+             List<Comment> comments = new ArrayList<>();
+            comments.add(0, comment);
+            commentsNum += 1;
+            this.comments = comments;
+            return;
         }
         // Increment the number of comments
         commentsNum += 1;
+        List<Comment> comments=this.comments;
         // Add the comment to the beginning of the comments list
-        this.comments.add(0, comment);
+        comments.add(0, comment);
+        this.comments=comments;
+    }
+
+    public int getPostOwnerID() {
+        return postOwnerID;
+    }
+
+    public void setPostOwnerID(int postOwnerID) {
+        this.postOwnerID = postOwnerID;
     }
 }

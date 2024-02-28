@@ -1,0 +1,158 @@
+[
+    {
+        "_id": "aUser",
+        "username": "a",
+        "nick": "JamestheExplorer",
+        "password": "a",
+        "img": "../data/pic1.jpg",
+        "friends": [
+            "Emma02User",
+            "Olivia03User",
+            "Ethan04User",
+            "Ava05User",
+            "Mia06User",
+            "Noah07User",
+            "Sophia08User",
+            "Jackson09User",
+            "Albert10User"
+        ],
+        "posts": [
+            "aPost"
+        ]
+    },
+    {
+        "_id": "Emma02User",
+        "username": "Emma02",
+        "nick": "BookwormEmma",
+        "password": "password123",
+        "img": "../data/pic2.jpg",
+        "friends": [
+            "aUser",
+            "Mia06User",
+            "Jackson09User"
+        ],
+        "posts": [
+            "Emma02Post"
+        ]
+    },
+    {
+        "_id": "Olivia03User",
+        "username": "Olivia03",
+        "nick": "OliviaArtist",
+        "password": "password123",
+        "img": "../data/pic3.jpg",
+        "friends": [
+            "aUser",
+            "Albert10User",
+            "Ethan04User"
+        ],
+        "posts": [
+            "Olivia03Post"
+        ]
+    },
+    {
+        "_id": "Ethan04User",
+        "username": "Ethan04",
+        "nick": "EthanCoder",
+        "password": "password123",
+        "img": "../data/pic4.jpg",
+        "friends": [
+            "aUser",
+            "Ava05User",
+            "Olivia03User"
+        ],
+        "posts": [
+            "Ethan04Post"
+        ]
+    },
+    {
+        "_id": "Ava05User",
+        "username": "Ava05",
+        "nick": "AvaGardener",
+        "password": "password123",
+        "img": "../data/pic5.jpg",
+        "friends": [
+            "aUser",
+            "Ethan04User",
+            "Sophia08User"
+        ],
+        "posts": [
+            "Ava05Post"
+        ]
+    },
+    {
+        "_id": "Mia06User",
+        "username": "Mia06",
+        "nick": "MiaChef",
+        "password": "password123",
+        "img": "../data/pic6.jpg",
+        "friends": [
+            "aUser",
+            "Emma02User",
+            "Noah07User"
+        ],
+        "posts": [
+            "Mia06Post"
+        ]
+    },
+    {
+        "_id": "Noah07User",
+        "username": "Noah07",
+        "nick": "NoahAdventurer",
+        "password": "password123",
+        "img": "../data/pic7.jpg",
+        "friends": [
+            "aUser",
+            "Jackson09User",
+            "Mia06User"
+        ],
+        "posts": [
+            "Noah07Post"
+        ]
+    },
+    {
+        "_id": "Sophia08User",
+        "username": "Sophia08",
+        "nick": "SophiaArtist",
+        "password": "password123",
+        "img": "../data/pic8.jpg",
+        "friends": [
+            "aUser",
+            "Albert10User",
+            "Ava05User"
+        ],
+        "posts": [
+            "Sophia08Post"
+        ]
+    },
+    {
+        "_id": "Jackson09User",
+        "username": "Jackson09",
+        "nick": "JacksonMusician",
+        "password": "password123",
+        "img": "../data/pic9.jpg",
+        "friends": [
+            "aUser",
+            "Noah07User",
+            "Emma02User"
+        ],
+        "posts": [
+            "Jackson09Post"
+        ]
+    },
+    {
+        "_id": "Albert10User",
+        "username": "Albert10",
+        "nick": "IsabellaTheGreat",
+        "password": "password123",
+        "img": "../data/pic10.jpg",
+        "friends": [
+            "aUser",
+            "Sophia08User",
+            "Olivia03User"
+        ],
+        "posts": [
+            "Albert10Post"
+        ]
+    }
+]

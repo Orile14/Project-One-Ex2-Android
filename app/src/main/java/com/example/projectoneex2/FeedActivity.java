@@ -8,12 +8,15 @@ import static com.example.projectoneex2.Login.userList;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -27,12 +30,16 @@ import android.widget.ToggleButton;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.projectoneex2.adapters.CommentListAdapter;
 import com.example.projectoneex2.adapters.PostsListAdapter;
+import com.example.projectoneex2.api.PostAPI;
+import com.example.projectoneex2.viewmodel.PostsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -40,6 +47,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,24 +58,40 @@ import java.util.Objects;
 
 public class FeedActivity extends AppCompatActivity implements PostsListAdapter.PostActionListener, CommentListAdapter.CommentActionsListener {
     private static final int REQUEST_IMAGE_PICK = 2;
+    private PostsViewModel viewModel;
     boolean share;
     private EditText editPost;
     private ImageView imageViewProfile;
     private Bitmap selectedBitmap;
     private ImageButton editImage;
-    private static List<Post> posts;
+    private  List<ImagePost> posts;
     private PostsListAdapter adapter;
+    int position;
     private String nickname;
+    private AlertDialog dialog;
     private Drawable d;
+    private AppDB db;
+    private String token="1";
+    private ImagePostDao postDao    ;
+    PostAPI postAPI;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.token = getIntent().getStringExtra("TOKEN_KEY");
         //theme operation(darkmode if needed)
         loadThemePreference();
         applyTheme();
         setContentView(R.layout.activity_feed);
+        viewModel=new ViewModelProvider(this).get(PostsViewModel.class);
+        viewModel.getPosts().observe(this, imagePosts -> {
+            adapter.setPosts(imagePosts);
+            if (dialog!=null){
+                dialog.hide();
+                showCommentDialog(position);
+            }
+        });
         //profile pic of the user
         imageViewProfile = findViewById(R.id.imageButtona);
         ImageView imageViewPic = findViewById(R.id.imageViewPic);
@@ -76,7 +100,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         //marking darkbutton state
         darkModeToggle.setChecked(isDarkTheme);
         //only 1 user therefore the first one
-        imageViewPic.setImageBitmap(userList.get(0).getProfileImage());
+
         //layout for the posts
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         RecyclerView lstPosts = findViewById(R.id.lstPosts);
@@ -88,7 +112,6 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         lstPosts.setAdapter(adapter);
         lstPosts.setLayoutManager(new LinearLayoutManager(this));
         //only one user at lsit
-        nickname = userList.get(0).getNickname();
         //create the 10 defualt posts
         if (posts==null){
         initPosts();}
@@ -176,7 +199,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 int imageResourceId = getResources().getIdentifier(jsonObject.getString("imageResourceId"), "drawable", getPackageName());
                 int profilePic = getResources().getIdentifier(jsonObject.getString("profilePic"), "drawable", getPackageName());
                 // Create a Post object with the extracted data
-                Post new_post = new ImagePost(author, content, imageResourceId, profilePic, time);
+                ImagePost new_post = new ImagePost(author, content, imageResourceId, profilePic, time);
                 // Add the Post object to the list
                 posts.add(new_post);
             }
@@ -209,28 +232,12 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     // Method called when the like button is clicked for a post
     public void onLikeButtonClick(int position) {
         // Get the post at the specified position
-        Post post = posts.get(position);
-        // Get the current number of likes for the post
-        int currentLikes = post.getLikes();
-        // If the post is not liked
-        if (!post.getLike()) {
-            // Increment the number of likes
-            post.setLikes(currentLikes + 1);
-            // Set the post as liked
-            post.setLike(true);
-        } else { // If the post is already liked
-            // Decrement the number of likes
-            post.setLikes(currentLikes - 1);
-            // Set the post as not liked
-            post.setLike(false);
-        }
-        // Update the like counter TextView with the new number of likes
-        TextView likeCounterTextView = findViewById(R.id.likeCounter);
-        likeCounterTextView.setText(post.getLikes() + " Likes");
+        ImagePost post = posts.get(position);
+        viewModel.like(post,token);
     }
 
     // Define a method to add a new post
-    private void addPost(PostsListAdapter adapter, List<Post> posts) {
+    private void addPost(PostsListAdapter adapter, List<ImagePost> posts) {
         // Get the current time
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -259,19 +266,20 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
             Drawable empty = imageViewProfile.getDrawable();
             // Set bounds to 0 to hide the image
             empty.setBounds(0, 0, 0, 0);
+            String emtypic=drawableToString(empty);
             // Create a new post object with the username, post content, and empty image
-            ImagePost newPost = new ImagePost(nickname, postText, empty, userList.get(0).getProfileImage(), timeString);
-            // Set the author's profile picture
-            newPost.setAuthorPic(userList.get(0).getProfileImage());
-            // Add the new post at the beginning of the list
-            posts.add(0, newPost);
+            ImagePost newPost = new ImagePost(nickname, postText, emtypic, emtypic, timeString);
+            viewModel.add(newPost,token);
         } else {
+            Drawable empty = imageViewProfile.getDrawable();
+            // Set bounds to 0 to hide the image
+            empty.setBounds(0, 0, 0, 0);
+            String emtypic=drawableToString(empty);
             // If it's a shared post, add a new post with the username, post content, and selected image
-            ImagePost newPost = new ImagePost(nickname, postText, postImage, userList.get(0).getProfileImage(), timeString);
-            // Add the new post at the beginning of the list
-            posts.add(0, newPost);
-            // Reset the share flag
-            share = false;
+            ImagePost newPost = new ImagePost(nickname, postText, drawableToString(postImage), emtypic, timeString);
+            viewModel.add(newPost,token);
+//            // Reset the share flag
+//            share = false;
         }
         // Notify the adapter that the data set has changed
         adapter.notifyDataSetChanged();
@@ -280,6 +288,30 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         editPost.setHint("what's on your mind?");
         editPost.setText("");
     }
+
+    public static String drawableToString(Drawable drawable) {
+        Bitmap bitmap;
+        if (drawable instanceof BitmapDrawable) {
+            bitmap = ((BitmapDrawable) drawable).getBitmap();
+        } else if (drawable instanceof VectorDrawable) {
+            bitmap = Bitmap.createBitmap(
+                    drawable.getIntrinsicWidth(),
+                    drawable.getIntrinsicHeight(),
+                    Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+        } else {
+            // Handle other types of drawables or return null if not supported
+            return null;
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] bytes = outputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
 
     // Define a method to open the gallery for image selection
     private void openGallery() {
@@ -298,7 +330,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     public void onEditButtonClick(int position) {
         // Get the post at the specified position
-        Post post = posts.get(position);
+        ImagePost post = posts.get(position);
         // Check if the post author is the current user
         if (!Objects.equals(post.getAuthor(), userList.get(0).getNickname())) {
             // If not, show a toast indicating the user can't edit the post
@@ -317,6 +349,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
 
     // Method called when the comment button is clicked for a post
     public void onCommentButtonClick(int position) {
+        this.position=position;
         showCommentDialog(position);
     }
 
@@ -324,12 +357,13 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     public void onDeletsButtonClick(int position, PostsListAdapter adapter) {
         // Remove the post at the specified position
-        posts.remove(position);
+        ImagePost post=posts.remove(position);
         // Notify the adapter of the data change
         adapter.notifyDataSetChanged();
     }
     // Define a method to show the comment dialog for a post at a given position
     private void showCommentDialog(int position) {
+
         // Create an AlertDialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the LayoutInflater
@@ -341,17 +375,19 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         // Find the RecyclerView and SwipeRefreshLayout in the custom layout
         RecyclerView lstComments = dialogView.findViewById(R.id.dialogRecyclerView);
         SwipeRefreshLayout refreshLayout = dialogView.findViewById(R.id.dialogRefreshLayout);
+
         // Create a new CommentListAdapter for the dialog RecyclerView
         final CommentListAdapter adapter1 = new CommentListAdapter(this, position);
         lstComments.setAdapter(adapter1);
         lstComments.setLayoutManager(new LinearLayoutManager(this));
         // Get the list of comments for the selected post and set it to the adapter
-        List<Comment> comments = adapter.getPosts().get(position).getComments();
+        List<Comment> comments = adapter.getPosts().get(position).getCommentsList();
         adapter1.setComments(comments);
         // Set an edit button click listener for the adapter
         adapter1.setOnEditButtonClickListener(this);
         // Create and show the AlertDialog
         AlertDialog dialog = builder.create();
+        this.dialog=dialog;
         dialog.show();
         // Find the FloatingActionButton for exiting the dialog
         FloatingActionButton exit = dialogView.findViewById(R.id.floatingActionButton4);
@@ -393,11 +429,11 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Get the updated content from the EditText
                 String updatedContent = editText.getText().toString().trim();
                 // Get the post object at the specified position
-                Post post = posts.get(position);
+                ImagePost post = posts.get(position);
                 // Add a new comment to the post with provided content, nickname, and profile image
-                post.addComment(new Comment(nickname, updatedContent, userList.get(0).getProfileImage()));
+                Comment c=new Comment(nickname, updatedContent,"aa");
                 // Refresh the UI by notifying the adapter of the data change
-                adapter1.notifyDataSetChanged();
+                viewModel.addComment(post.getId(),c,token);
             }
         });
 
@@ -445,13 +481,13 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Get the updated content from the EditText
                 String updatedContent = editText.getText().toString().trim();
                 // Get the post object at the specified position
-                Post post = posts.get(position);
+                ImagePost post = posts.get(position);
                 // Update the content of the post
                 post.setContent(updatedContent);
                 // Set a temporary ID (-1 indicates an user image post)
-                post.setId(-1);
+                post.setPicID(-1);
                 // Set the user profile picture to the selected image
-                post.setUserPic(d);
+                post.setUserpicDraw(d);
                 // Refresh the UI by notifying the adapter of the data change
                 adapter.notifyDataSetChanged();
             }
@@ -482,7 +518,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         // Find the EditText in the custom layout
         final EditText editText = dialogView.findViewById(R.id.editText);
         // Set initial text in the EditText
-        editText.setText(posts.get(postPosition).getComments().get(position).getContent());
+        editText.setText(posts.get(postPosition).getCommentsList().get(position).getContent());
         // Set positive button (Save) click listener
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
@@ -490,9 +526,10 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Get the updated content from the EditText
                 String updatedContent = editText.getText().toString().trim();
                 // Get the post object at the specified position
-                Post post = posts.get(postPosition);
+                ImagePost post = posts.get(postPosition);
                 // Update the content of the comment at the specified position
-                post.getComments().get(position).setContent(updatedContent);
+               post.editComment(position,updatedContent);
+                postDao.updateImagePost(post);
                 // Notify the adapter of the data change
                 adapter1.notifyDataSetChanged();
             }
@@ -508,37 +545,41 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     public void onCommentDeleteButtonClick(int position, int postPosition, CommentListAdapter adapter1) {
         // Get the post object at the specified position
-        Post post = posts.get(postPosition);
+        ImagePost post = posts.get(postPosition);
         // Remove the comment at the specified position from the post's comments list
-        post.getComments().remove(position);
+        post.getCommentsList().remove(position);
         // Notify the adapter of the data change
         adapter1.notifyDataSetChanged();
     }
 
     public void onCommentLikeButtonClick(int position, int postPosition, CommentListAdapter adapter1, TextView likeCounter) {
         // Get the post object at the specified position
-        Post post = posts.get(postPosition);
+        ImagePost post = posts.get(postPosition);
         // Get the number of likes for the comment at the specified position
-        int likes = post.getComments().get(position).getLikes();
+        int likes = post.getCommentsList().get(position).getLikes();
         // Check if the comment is currently not liked
-        if (!post.getComments().get(position).getLike()) {
+        if (!post.getCommentsList().get(position).getLike()) {
             // Increment the number of likes for the comment
-            post.getComments().get(position).setLikes(likes + 1);
+            post.getCommentsList().get(position).setLikes(likes + 1);
             // Update the like counter TextView with the new number of likes
-            likeCounter.setText(post.getComments().get(position).getLikes() + " Likes");
+            likeCounter.setText(post.getCommentsList().get(position).getLikes() + " Likes");
             // Notify the adapter that the data has changed
             adapter1.notifyDataSetChanged();
             // Set the comment as liked
-            post.getComments().get(position).setLike(true);
+            post.getCommentsList().get(position).setLike(true);
         } else { // If the comment is currently liked
             // Decrement the number of likes for the comment
-            post.getComments().get(position).setLikes(likes - 1);
+            post.getCommentsList().get(position).setLikes(likes - 1);
             // Update the like counter TextView with the new number of likes
-            likeCounter.setText(post.getComments().get(position).getLikes() + " Likes");
+            likeCounter.setText(post.getCommentsList().get(position).getLikes() + " Likes");
             adapter1.notifyDataSetChanged();
-            post.getComments().get(position).setLike(false);
+            post.getCommentsList().get(position).setLike(false);
         }
+        adapter.notifyDataSetChanged();
+        // Perform your API call here to update the server with the like status change
+        viewModel.commentLike(post.getId(), post.getCommentsList().get(position).getAuthor(), token);
     }
+
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

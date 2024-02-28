@@ -1,34 +1,61 @@
 package com.example.projectoneex2.viewmodel;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.projectoneex2.Comment;
+import com.example.projectoneex2.FeedActivity;
 import com.example.projectoneex2.ImagePost;
+import com.example.projectoneex2.repositoy.PostsRepository;
 
 import java.util.List;
 
 // ViewModel class responsible for managing the data of posts
 public class PostsViewModel extends ViewModel {
-    private PostsViewModel mRepository; // Repository instance for handling post data
-    private LiveData<List<ImagePost>> posts; // LiveData object containing a list of image posts
+
+    private PostsRepository mRepository; // Repository instance for handling post data
+    private MutableLiveData<List<ImagePost>> posts; // LiveData object containing a list of image posts
 
     // Method to retrieve the LiveData object containing the list of image posts
-    public LiveData<List<ImagePost>> get() {
+    public MutableLiveData<List<ImagePost>> get() {
+        return posts;
+    }
+    public PostsViewModel() {
+        mRepository = new PostsRepository();
+        posts = mRepository.getAll();
+    }
+
+    public MutableLiveData<List<ImagePost>> getPosts() {
+        if (posts == null) {
+            posts = new MutableLiveData<>();
+        }
         return posts;
     }
 
+
     // Method to add a new image post to the repository
-    public void add(ImagePost post) {
-        mRepository.add(post);
+    public void add(ImagePost post,String token) {
+        mRepository.add(post,token);
+    }
+    public void like(ImagePost post,String token) {
+        mRepository.like(post,token);
+    }
+    public void commentLike(String postID,String commentID,String token) {
+        mRepository.commentLike(postID,commentID,token);
+    }
+
+    public void addComment(String id, Comment updatedContent, String token) {
+        mRepository.addComment(id,updatedContent,token);
     }
 
     // Method to delete an existing image post from the repository
-    public void delete(ImagePost post) {
-        mRepository.delete(post);
-    }
+//    public void delete(ImagePost post) {
+//        mRepository.delete(post);
+//    }
 
     // Method to reload the data from the repository
-    public void reload() {
-        mRepository.reload();
-    }
+//    public void reload() {
+//        mRepository.reload();
+//    }
 }

@@ -1,33 +1,59 @@
 package com.example.projectoneex2;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
-import androidx.appcompat.app.AppCompatActivity;
-public class Comment extends AppCompatActivity {
+
+import java.io.ByteArrayOutputStream;
+
+
+public class Comment  {
+
+    private int id;
     // Comment attributes
     private boolean like = false;
     private final String author;
     private String content;
+    private String date;
     private int likes = 0;
-    private Bitmap authorPic;
+    private String authorPic;
 
     // Constructor to initialize a Comment object with a profile picture
     public Comment(String author, String content, Bitmap authorPic) {
         this.author = author;
         this.content = content;
-        this.authorPic = authorPic;
+        this.authorPic = bitmapToString(authorPic);
     }
 
     // Constructor to initialize a Comment object without a profile picture
-    public Comment(String author, String content) {
+    public Comment(String author, String content,String date) {
         this.author = author;
         this.content = content;
+        this.date=date;
     }
-
-    // Getter method for retrieving the comment's ID
     public int getId() {
-        return 0; // Placeholder return value; actual implementation may vary
+        return id;
     }
+    public void setId(int picID) {
+        this.id = picID;
+    }
+    public static String bitmapToString(Bitmap bitmap) {
+        if (bitmap==null) {
+            return null;
+        }
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] bytes = outputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+    public static Bitmap stringToBitmap(String encodedString) {
+        if (encodedString==null) {return null;}
+            byte[] bytes = Base64.decode(encodedString, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+    }
+    // Getter method for retrieving the comment's ID
 
     // Getter method for retrieving the comment author's username
     public String getAuthor() {
@@ -50,8 +76,15 @@ public class Comment extends AppCompatActivity {
     }
 
     // Getter method for retrieving the comment author's profile picture
-    public Bitmap getAuthorPic() {
+    public Bitmap getAuthorPicBit() {
+        return stringToBitmap(authorPic);
+    }
+    public String getAuthorPic() {
         return authorPic;
+    }
+
+    public void setAuthorPic(String authorPic) {
+        this.authorPic = authorPic;
     }
 
     // Setter method to set the number of likes for the comment
