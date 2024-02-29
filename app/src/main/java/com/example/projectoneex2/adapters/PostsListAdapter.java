@@ -22,6 +22,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
 
     // Interface for defining post action listener methods
     public interface PostActionListener {
+        void onPictureClick(int position);
         void onLikeButtonClick(int position);
         void onCommentButtonClick(int position);
         void onDeletsButtonClick(int position, PostsListAdapter adapter);
@@ -37,7 +38,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         public Button likeButton;
         public ImageButton editButton;
         public ImageButton deleteButton;
-        public ImageView AuthorPic;
+        public ImageButton AuthorPic;
         public Button share;
         private final Button commentButton;
         private final TextView commentCounter;
@@ -109,6 +110,11 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
                 postActionsListener.onLikeButtonClick(position);
             }
         });
+        holder.ivPic.setOnClickListener(v -> {
+            if (postActionsListener != null) {
+                postActionsListener.onPictureClick(position);
+            }
+        });
 
         // Bind post data to the view holder elements
         if (posts != null) {
@@ -132,17 +138,10 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
 
     // Method to set the list of posts
     public void setPosts(List<ImagePost> s) {
-        if (posts!=null) {
-            posts.clear(); // Clear the existing list
-            for (int i = s.size() - 1; i >= 0; i--) {
-                posts.add(s.get(i)); // Add elements from 's' in reverse order
-            }
-            notifyDataSetChanged();
-        }
-        else {
+
             posts = s;
             notifyDataSetChanged();
-        }
+
     }
 
 

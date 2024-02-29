@@ -22,19 +22,7 @@ public class User {
         return friends;
     }
 
-    public void setFriends(String friends) {
-        this.friends = friends;
-    }
-
     private String friends=null;
-
-    public String getPosts() {
-        return posts;
-    }
-
-    public void setPosts(String posts) {
-        this.posts = posts;
-    }
 
     private String posts=null;
 
@@ -54,6 +42,12 @@ public class User {
         byte[] bytes = outputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+    public String getPosts() {
+        return posts;
+    }
+    public void setPosts(String posts) {
+        this.posts = posts;
+    }
     public static Bitmap stringToBitmap(String encodedString) {
         String[] parts = encodedString.split(",");
         if (parts.length != 2) {
@@ -63,6 +57,9 @@ public class User {
         String base64Data = parts[1];
         byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+    public void setFrinds(String friends) {
+        this.friends = friends;
     }
 
     // Getter method for retrieving the username

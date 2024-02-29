@@ -26,6 +26,8 @@ public class Login extends AppCompatActivity {
     public static SharedPreferences sharedPreferences;
     private String token;
     private String username;
+    public static String nickname;
+    public static String profilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,8 @@ public class Login extends AppCompatActivity {
         if (viewModel==null) {
             this.viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         }
+        viewModel.getLogin(username, password);
+
         viewModel.getToken(username, password).observe(this, token1 -> {
             token= token1;
             if (!Objects.equals(token, "")&&token!=null){

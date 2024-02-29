@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const createPost = async (postOwnerID, content, img, date, comments, likesID) => {
     const randomId = new mongoose.Types.ObjectId();
     const post = new Post({ _id: randomId, postOwnerID, content, img, date, comments, likesID });
+    const user = await User.findById(postOwnerID);
+    user.posts.push(randomId);
+    await user.save();
     return await post.save();
 };
 
@@ -43,7 +46,30 @@ const updateImage = async (post, img) => {
     await post.save();
     return post
 }
+const getFriendsPosts = async (userId) => {
+    const user = await User.findById(userId);
+    const friendPosts = await Post.find({ postOwnerID: { $in: user.friends } })
+                                  .sort({ date: -1 })
+                                  .limit(20);
 
+    const nonFriendPosts = await Post.find({ postOwnerID: { $nin: user.friends } })
+                                     .sort({ date: -1 })
+                                     .limit(5);
+
+    let combinedPosts = [...friendPosts, ...nonFriendPosts];
+    combinedPosts = combinedPosts.sort((a, b) => b.date - a.date);
+
+    const postsWithProfile = await Promise.all(combinedPosts.map(async (post) => {
+        const postOwner = await User.findById(post.postOwnerID);
+        return {
+            ...post.toObject(), // Converts the Mongoose document to a plain JavaScript object
+            profilePic: postOwner.img,
+            nick: postOwner.nick
+        };
+    }));
+
+    return postsWithProfile;
+};
 
 
 
@@ -51,21 +77,26 @@ const addComment = async (commentOwnerID, content, post) => {
     const randomId = new mongoose.Types.ObjectId();
     const date = new Date();
     const likes = [];
-    const newComment = { _id: randomId,commentOwnerID, content, date, likes};
+    const newComment = { _id: randomId, commentOwnerID, content, date, likes };
 
     await Post.updateOne(
         { _id: post._id },
         { $push: { comments: newComment } }
     );
-    return newComment;
+
+    // Fetch the updated post to get the latest comments
+    const updatedPost = await Post.findById(post._id);
+    return updatedPost.comments;
 };
+
+
 const updateComment = async (commentId,post, content) => {
     if (!post) return null
     const commentIndex = post.comments.find(comment => comment._id == commentId);
     if (!commentIndex) return null
     commentIndex.content = content
     await post.save();
-    return commentIndex
+    return post.comments
 }
 const likeComment = async (postId, commentId, userId) => {
     const post = await getPostById(postId)
@@ -110,4 +141,4 @@ const deleteComment = async (postId, commentId, userId) => {
 
 
 module.exports = { createPost, getPosts, getPostById, updatePost, likePost, deletePost, updateImage,
-     addComment,deleteComment ,updateComment,likeComment}
+     addComment,deleteComment ,updateComment,likeComment, getFriendsPosts}

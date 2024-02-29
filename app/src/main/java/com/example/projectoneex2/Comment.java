@@ -11,6 +11,16 @@ import java.io.ByteArrayOutputStream;
 public class Comment  {
 
     private String id;
+
+    public String getCommentOwnerID() {
+        return commentOwnerID;
+    }
+
+    public void setCommentOwnerID(String commentOwnerID) {
+        this.commentOwnerID = commentOwnerID;
+    }
+
+    private String commentOwnerID;
     // Comment attributes
     private boolean like = false;
     private final String author;

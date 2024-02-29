@@ -1,7 +1,8 @@
 package com.example.projectoneex2;
-
+import static com.example.projectoneex2.ImagePost.stringToBitmap;
 import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
+import static com.example.projectoneex2.Login.profilePic;
 import static com.example.projectoneex2.Login.sharedPreferences;
 import static com.example.projectoneex2.Login.userList;
 
@@ -53,6 +54,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,10 +69,14 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     private  List<ImagePost> posts;
     private PostsListAdapter adapter;
     int position;
+    public static String currentId;
+    public static String currentProfilePic;
+    public static String currentNickname;
     private String nickname;
     private String username;
     private AlertDialog dialog;
     private Drawable d;
+    public static String userId;
     public static AppDB db;
     private String token="1";
     private ImagePostDao postDao    ;
@@ -81,14 +87,16 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         super.onCreate(savedInstanceState);
         this.token = getIntent().getStringExtra("TOKEN_KEY");
         this.username = getIntent().getStringExtra("USERNAME_KEY");
+        db= Room.databaseBuilder(getApplicationContext(), AppDB.class, "imagepost").allowMainThreadQueries().fallbackToDestructiveMigration().build();
+        postDao=db.imagePostDao();
         //theme operation(darkmode if needed)
         loadThemePreference();
         applyTheme();
-        db= Room.databaseBuilder(this,AppDB.class,"PostsDB").allowMainThreadQueries().build();
-        postDao= db.imagePostDao();
         setContentView(R.layout.activity_feed);
         viewModel=new ViewModelProvider(this).get(PostsViewModel.class);
-        viewModel.getPosts().observe(this, imagePosts -> {
+        viewModel.setToken(token);
+        viewModel.getUserId(token) ;
+        viewModel.getPosts(token).observe(this, imagePosts -> {
             adapter.setPosts(imagePosts);
             if (dialog!=null){
                 dialog.hide();
@@ -98,6 +106,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         //profile pic of the user
         imageViewProfile = findViewById(R.id.imageButtona);
         ImageView imageViewPic = findViewById(R.id.imageViewPic);
+        imageViewPic.setImageBitmap(stringToBitmap(Login.profilePic));
         ImageButton menuButton = findViewById(R.id.menuButton);
         ToggleButton darkModeToggle = findViewById(R.id.toggleButton3);
         //marking darkbutton state
@@ -232,10 +241,22 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    @Override
+    public void onPictureClick(int position) {
+        currentProfilePic=adapter.getPosts().get(position).getAuthorPic();
+        currentNickname=adapter.getPosts().get(position).getAuthor();
+        currentId=adapter.getPosts().get(position).getPostOwnerID();
+        Intent i = new Intent(this, Profile.class);
+        i.putExtra("TOKEN_KEY", token);
+        startActivity(i);
+
+    }
+
     // Method called when the like button is clicked for a post
     public void onLikeButtonClick(int position) {
         // Get the post at the specified position
-        ImagePost post = posts.get(position);
+         ImagePost post=adapter.getPosts().get(position);
         viewModel.like(post,token);
     }
 
@@ -358,7 +379,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     // Method called when the delete button is clicked for a post
     @Override
     public void onDeletsButtonClick(int position, PostsListAdapter adapter) {
-            viewModel.delete(posts.get(position), token);
+            viewModel.delete(adapter.getPosts().get(position), token);
     }
     private void showToastDelete() {
         Toast.makeText(this, "you cant delete posts that are not yours!", Toast.LENGTH_SHORT).show();
@@ -507,6 +528,10 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     }
     @Override
     public void onCommentEditButtonClick(int position, int postPosition, CommentListAdapter adapter1) {
+        if (!FeedActivity.userId.equals(adapter.getPosts().get(postPosition).getCommentsList().get(position).getCommentOwnerID())){
+            showToast();
+            return;
+        }
         // Create an AlertDialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the LayoutInflater
@@ -527,8 +552,8 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 String updatedContent = editText.getText().toString().trim();
                 // Get the post object at the specified position
                 ImagePost post = posts.get(postPosition);
-                // Update the content of the comment at the specified position
-               post.editComment(position,updatedContent);
+
+                viewModel.editComment(post.get_id(),post.getCommentsList().get(position).getId(),updatedContent,token);
                 postDao.updateImagePost(post);
                 // Notify the adapter of the data change
                 adapter1.notifyDataSetChanged();
@@ -548,7 +573,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         String postID = posts.get(postPosition).get_id();
         ImagePost post = posts.get(postPosition);
         // Remove the comment at the specified position from the post's comments list
-        String commentID=post.getCommentsList().get(position).getId();
+        String commentID=adapter.getPosts().get(postPosition).getCommentsList().get(position).getId();
         viewModel.deleteComment(postID,commentID,token);
         // Notify the adapter of the data change
         adapter1.notifyDataSetChanged();

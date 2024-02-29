@@ -1,11 +1,9 @@
 package com.example.projectoneex2.viewmodel;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.projectoneex2.Comment;
-import com.example.projectoneex2.FeedActivity;
 import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.repositoy.PostsRepository;
 
@@ -21,12 +19,16 @@ public class PostsViewModel extends ViewModel {
     public MutableLiveData<List<ImagePost>> get() {
         return posts;
     }
+
     public PostsViewModel() {
         mRepository = new PostsRepository();
         posts = mRepository.getAll();
     }
+    public void setToken(String token) {
+        mRepository.setToken(token);
+    }
 
-    public MutableLiveData<List<ImagePost>> getPosts() {
+    public MutableLiveData<List<ImagePost>> getPosts(String token) {
         if (posts == null) {
             posts = new MutableLiveData<>();
         }
@@ -56,6 +58,15 @@ public class PostsViewModel extends ViewModel {
     public void deleteComment(String postID, String commentID, String token) {
         mRepository.deleteComment(postID,commentID,token);
     }
+
+    public void editComment(String id, String id1, String updatedContent, String token) {
+        mRepository.editComment(id,id1,updatedContent,token);
+    }
+
+    public void getUserId(String token) {
+        mRepository.getUserId(token);
+    }
+
 
     // Method to delete an existing image post from the repository
 //    public void delete(ImagePost post) {

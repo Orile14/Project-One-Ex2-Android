@@ -60,6 +60,7 @@ public class UsersRepository {
     public LoginValue Login(String username, String password) {
         this.username =username;
         this.password = password;
+        userApi.getLogin(username,password);
         return loginValue;
     }
     public void create(User user) {

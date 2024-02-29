@@ -40,7 +40,7 @@ public class ImagePost   {
     private String comments ;
     private boolean like = false; // Indicates if the post is liked
     private int picID = -1;
-    private int postOwnerID;
+    private String postOwnerID;
     int commentsNum = 0;
 
     public int getCommentsNum() {
@@ -134,14 +134,18 @@ public class ImagePost   {
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
     public static Bitmap stringToBitmap(String encodedString) {
-        String[] parts = encodedString.split(",");
-        if (parts.length != 2) {
-            // Handle invalid base64 string
-            return null;
+        if (encodedString != null) {
+
+            String[] parts = encodedString.split(",");
+            if (parts.length != 2) {
+                // Handle invalid base64 string
+                return null;
+            }
+            String base64Data = parts[1];
+            byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
         }
-        String base64Data = parts[1];
-        byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        return null;
     }
     public static String drawableToString(Drawable drawable) {
         Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
@@ -284,8 +288,8 @@ public class ImagePost   {
     }
     public void editComment(int id,String content){
         // Add the comment to the beginning of the comments list
-       Comment c= listToComments(comments).get(id);
-       c.setContent(content);
+        Comment c= listToComments(comments).get(id);
+        c.setContent(content);
     }
 
 
@@ -294,7 +298,7 @@ public class ImagePost   {
     public void addComment(Comment comment) {
         // Check if the comments list is null
         if (this.comments == null) {
-             List<Comment> comments = new ArrayList<>();
+            List<Comment> comments = new ArrayList<>();
             comments.add(0, comment);
             commentsNum += 1;
             this.comments = commentsToList(comments);
@@ -311,11 +315,11 @@ public class ImagePost   {
         this.comments = comments;
     }
 
-    public int getPostOwnerID() {
+    public String getPostOwnerID() {
         return postOwnerID;
     }
 
-    public void setPostOwnerID(int postOwnerID) {
+    public void setPostOwnerID(String postOwnerID) {
         this.postOwnerID = postOwnerID;
     }
 }

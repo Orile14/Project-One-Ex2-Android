@@ -6,7 +6,9 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.projectoneex2.FeedActivity;
 import com.example.projectoneex2.ImagePost;
+import com.example.projectoneex2.Login;
 import com.example.projectoneex2.LoginRequest;
 import com.example.projectoneex2.MyApplication;
 import com.example.projectoneex2.R;
@@ -73,7 +75,7 @@ public class UserAPI {
             }
         }).start();
     }
-    public void getLogin(MutableLiveData<Boolean>  login, String password, String username) {
+    public void getLogin( String password, String username) {
         // Execute the network request in a background thread
         new Thread(new Runnable() {
             @Override
@@ -88,9 +90,9 @@ public class UserAPI {
                     Response<ResponseBody> response = call.execute();
                     if (response.isSuccessful()) {
                         String responseBodyString = response.body().string();
-                        if (responseBodyString.equals("true")){
-                            login.postValue(true);
-                        }
+                        JSONObject jsonObject = new JSONObject(responseBodyString);
+                        Login.nickname = jsonObject.getString("nick");
+                        Login.profilePic = jsonObject.getString("profilepic");
                         Headers headers = response.headers();
                         for (int i = 0, size = headers.size(); i < size; i++) {
                             Log.d(headers.name(i), headers.value(i));
@@ -120,6 +122,8 @@ public class UserAPI {
                     e.printStackTrace(); // Log the error
                     exit(1777); // Exit the application or handle the error as required
 
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
                 }
 
             }

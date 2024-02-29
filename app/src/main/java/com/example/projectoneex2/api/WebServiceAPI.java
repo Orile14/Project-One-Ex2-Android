@@ -9,14 +9,17 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface WebServiceAPI {
+    @GET("users/{id}/posts")
+    Call<ResponseBody> getUserPosts(@Header("Authorization") String token, @Path("id") String id);
 
     @GET("posts/")
-    Call<ResponseBody> getPosts();
+    Call<ResponseBody> getPosts(@Header("Authorization") String token);
     @Headers("Content-Type: application/json")
     @POST("tokens")
     Call<ResponseBody> getUser(@Body JsonObject username);
@@ -26,7 +29,13 @@ public interface WebServiceAPI {
     @Headers("Content-Type: application/json")
     @POST("users/")
     Call<ResponseBody> createUser(@Body JsonObject user);
-
+    @Headers("Content-Type: application/json")
+    @PATCH("posts/comment/edit/{id}/{commentId}") // Corrected URL format
+    Call<ResponseBody> commentEdit(
+            @Header("Authorization") String token,@Body JsonObject updateContent,
+            @Path("id") String postId,
+            @Path("commentId") String commentId
+    );
     @Headers("Content-Type: application/json")
     @POST("posts/add")
     Call<ResponseBody> createPost(@Header("Authorization") String token, @Body JsonObject post);
@@ -56,5 +65,7 @@ public interface WebServiceAPI {
             @Path("id") String postId,
             @Path("commentId") String commentId
     );
+    @POST("users/getID")
+    Call<ResponseBody> getUserId(@Header("Authorization") String token);
 
 }
