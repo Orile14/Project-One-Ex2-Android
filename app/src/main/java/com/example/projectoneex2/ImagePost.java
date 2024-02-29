@@ -20,19 +20,56 @@ import java.util.List;
 // Entity annotation to define this class as an entity for Room database
 @Entity(tableName = "image_posts")
 public class ImagePost   {
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @PrimaryKey (autoGenerate = true)
-    private String id;
-    // Define your request code here
-    private List<Comment> comments = new ArrayList<>();
+    private int id;
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    private String _id;
+    // Define your request cod here
+    private String comments ;
     private boolean like = false; // Indicates if the post is liked
     private int picID = -1;
     private int postOwnerID;
     int commentsNum = 0;
-    private final String author;
+
+    public int getCommentsNum() {
+        return commentsNum;
+    }
+
+    public void setCommentsNum(int commentsNum) {
+        this.commentsNum = commentsNum;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    private  String author;
     private String content;
-    private final String time;
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    private  String time;
     private int likes = 0;
     private String AuthorPic;
+
+    public void setProfileImage(int profileImage) {
+        this.profileImage = profileImage;
+    }
+
     private int profileImage;
     private String userpic = null;
 
@@ -43,6 +80,9 @@ public class ImagePost   {
         this.content = content;
         this.profileImage = profileImage;
         this.time = time;
+    }
+    public ImagePost() {
+
     }
 
     // Constructor for posts with profile picture as Bitmap
@@ -59,7 +99,7 @@ public class ImagePost   {
         this.userpic = pic;
         this.AuthorPic = profileImage;
         this.time = time;
-        this.id=id;
+        this._id=id;
     }
     @TypeConverter
     public String fromList(List<Comment> countryLang) {
@@ -111,16 +151,26 @@ public class ImagePost   {
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
     public static Drawable stringToDrawable(String encodedString) {
-        String[] parts = encodedString.split(",");
-        if (parts.length != 2) {
-            // Handle invalid base64 string
+        if (encodedString == null) {
             return null;
         }
-        String base64Data = parts[1];
-        byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        return new BitmapDrawable(bitmap);
+        if (encodedString.startsWith("data")) {
+            String[] parts = encodedString.split(",");
+            if (parts.length != 2) {
+                // Handle invalid base64 string
+                return null;
+            }
+            String base64Data = parts[1];
+            byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            return new BitmapDrawable(bitmap);
+        } else {
+            byte[] bytes = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            return new BitmapDrawable(bitmap);
+        }
     }
+
     // Setter method for post ID
     public void setPicID(int i) {
         this.picID = i;
@@ -129,7 +179,7 @@ public class ImagePost   {
         return AuthorPic;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -208,24 +258,33 @@ public class ImagePost   {
     public void setUserpic(String pic) {
         this.userpic = pic;
     }
-
-
-
+    public List<Comment> listToComments(String s){
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Comment>>() {}.getType();
+        List<Comment> countryLangList = gson.fromJson(s, type);
+        return countryLangList;
+    }
+    public String commentsToList(List<Comment> c){
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Comment>>() {}.getType();
+        String json = gson.toJson(c, type);
+        return json;
+    }
 
     // Setter method for post content
     public void setContent(String content) {
         this.content = content;
     }
-    public List<Comment> getComments(){
+    public String getComments(){
         return comments;
     }
 
     public List<Comment> getCommentsList() {
-        return comments;
+        return listToComments(comments);
     }
     public void editComment(int id,String content){
         // Add the comment to the beginning of the comments list
-       Comment c= comments.get(id);
+       Comment c= listToComments(comments).get(id);
        c.setContent(content);
     }
 
@@ -238,15 +297,18 @@ public class ImagePost   {
              List<Comment> comments = new ArrayList<>();
             comments.add(0, comment);
             commentsNum += 1;
-            this.comments = comments;
+            this.comments = commentsToList(comments);
             return;
         }
         // Increment the number of comments
         commentsNum += 1;
-        List<Comment> comments=this.comments;
+        List<Comment> comments = listToComments(this.comments);
         // Add the comment to the beginning of the comments list
         comments.add(0, comment);
-        this.comments=comments;
+        this.comments = commentsToList(comments);
+    }
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public int getPostOwnerID() {

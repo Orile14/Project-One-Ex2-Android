@@ -34,8 +34,8 @@ public class Menu extends AppCompatActivity {
         // Set toggle button state
         darkModeToggle.setChecked(isDarkTheme);
         // Set profile picture and username
-        profilePic.setImageBitmap(userList.get(0).getProfileImage());
-        textView.setText(userList.get(0).getNickname());
+//        profilePic.setImageBitmap(userList.get(0).getProfileImage());
+//        textView.setText(userList.get(0).getNickname());
         // Set OnClickListener for logout button
         logout.setOnClickListener(view -> home());
         // Set OnClickListener for home button

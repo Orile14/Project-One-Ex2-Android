@@ -25,6 +25,7 @@ public class Login extends AppCompatActivity {
     public static final String PREF_THEME_KEY = "theme_preference";
     public static SharedPreferences sharedPreferences;
     private String token;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class Login extends AppCompatActivity {
     private void loginUser() {
         final Boolean[] loginStatus = new Boolean[1];
         String username = editTextUsername.getText().toString();
+        this.username=username;
         String password = editTextPassword.getText().toString();
         if (viewModel==null) {
             this.viewModel = new ViewModelProvider(this).get(UserViewModel.class);
@@ -83,6 +85,7 @@ public class Login extends AppCompatActivity {
             // Redirect to feedActivity if login successful
             Intent i = new Intent(this, FeedActivity.class);
             i.putExtra("TOKEN_KEY", token);
+            i.putExtra("USERNAME_KEY", username);
             startActivity(i);
         } else {
             // Show a toast message for invalid username or password

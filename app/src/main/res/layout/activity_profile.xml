@@ -3,9 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:backgroundTint="@color/background_color"
-    >
+    android:layout_height="match_parent">
 
     <!-- Search Bar -->
 
@@ -15,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         android:padding="8dp">
 
         <LinearLayout
@@ -28,109 +28,68 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="30"
-                app:srcCompat="@drawable/facebook_logo__2019__svg__1_"
-                />
+
+                app:srcCompat="@drawable/facebook_logo__2019__svg__1_" />
 
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/empty_space"
-                />
-
-            <ImageButton
-                android:id="@+id/imageButton10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="-2"
-                android:layout_margin="4dp"
-
-                android:background="@drawable/circular_border_background"
-                app:srcCompat="@drawable/ic_comment" />
-
+                android:text="@string/empty_background" />
 
             <ImageButton
                 android:id="@+id/searchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:layout_margin="4dp"
                 android:background="@drawable/circular_border_background"
                 app:srcCompat="@drawable/ic_search"
-                app:tint="#0B0A0A" />
-
-            <ImageButton
-                android:id="@+id/imageButton11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="4dp"
-                app:tint="#131313"
-                android:background="@drawable/circular_border_background"
-                app:srcCompat="@drawable/ic_upload"
-                 />
+                app:tint="#0E0E0E" />
 
         </LinearLayout>
 
     </LinearLayout>
-
-
     <LinearLayout
         android:id="@+id/middleInputBoxLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/searchBar"
         android:orientation="vertical"
+
+        android:layout_below="@+id/searchBar"
         android:padding="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:orientation="horizontal">
-
             <androidx.cardview.widget.CardView
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 app:cardCornerRadius="20dp">
-
                 <ImageView
-                    android:id="@+id/imageViewPic"
+                    android:id="@+id/profileImage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"/>
 
             </androidx.cardview.widget.CardView>
 
-            <EditText
-                android:id="@+id/edtWhatsOnYourMindMiddle"
-                android:layout_width="159dp"
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:textStyle="bold"
+                android:textSize="20dp"
                 android:layout_weight="1"
                 android:gravity="start"
-                android:hint="@string/what_s_on_your_mind"
                 android:inputType="textMultiLine"
                 android:lines="2"
                 android:maxLines="3"
                 android:padding="8dp" />
 
-            <ImageView
-                android:id="@+id/imageButtona"
-                android:layout_width="4dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="8dp"
-                android:src="@drawable/ic_photo_foreground" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:backgroundTint="#1877F2"
-            android:background="@drawable/facbook_radius"
-            android:text="@string/share" />
 
     </LinearLayout>
 
@@ -162,6 +121,7 @@
     </FrameLayout>
 
 
+
     <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:id="@+id/bottomNavigation"
@@ -171,10 +131,7 @@
         android:background="#1877F2"
         android:orientation="horizontal">
 
-
         <!-- Add your bottom navigation items here -->
-
-
         <ImageButton
             android:id="@+id/imageButton2"
             android:layout_width="0dp"
@@ -183,7 +140,7 @@
             android:background="@drawable/circular_border_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:srcCompat="@drawable/ic_home"
-            app:tint="#FFFFFF" />
+            app:tint="#000000" />
 
         <ImageButton
             android:id="@+id/imageButton3"
@@ -213,18 +170,20 @@
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_menu"
-            app:tint="#0E0E0E" />
 
+            app:tint="#FFFFFF" />
 
         <ToggleButton
-            android:id="@+id/toggleButton3"
+            android:id="@+id/toggleButton2"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
             android:background="@drawable/circular_border_background"
+            android:text="@string/togglebutton"
+            app:srcCompat="@drawable/ic_mode"
+
             app:tint="#0E0E0E" />
 
     </LinearLayout>
-
 
 </RelativeLayout>

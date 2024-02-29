@@ -49,6 +49,14 @@ public class PostsViewModel extends ViewModel {
         mRepository.addComment(id,updatedContent,token);
     }
 
+    public void delete(ImagePost imagePost, String token) {
+       mRepository.delete(imagePost,token);
+    }
+
+    public void deleteComment(String postID, String commentID, String token) {
+        mRepository.deleteComment(postID,commentID,token);
+    }
+
     // Method to delete an existing image post from the repository
 //    public void delete(ImagePost post) {
 //        mRepository.delete(post);

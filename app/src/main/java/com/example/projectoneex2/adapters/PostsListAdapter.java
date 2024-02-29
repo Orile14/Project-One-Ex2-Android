@@ -121,14 +121,12 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             int num = (current.getCommentsList() == null) ? 0 : current.getCommentsList().size();
             holder.commentCounter.setText(num + " comments");
             //-1 is a flag that means we take pic from user(drawable)and not id
-            if (current.getPicID() != -1) {
-                holder.ivPic.setImageResource(current.getPicID());
-                holder.AuthorPic.setImageResource(current.getAuthorPicId());
-                holder.ivPic.setVisibility(View.VISIBLE);
-            } else if (current.getUserPicDraw() != null) {
                 holder.ivPic.setImageDrawable(current.getUserPicDraw());
                 holder.ivPic.setVisibility(View.VISIBLE);
+            if(current.getAuthor().equals("aUser")){
+                int z=0;
             }
+
         }
     }
 

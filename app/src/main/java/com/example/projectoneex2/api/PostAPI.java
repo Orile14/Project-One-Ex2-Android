@@ -1,17 +1,13 @@
 package com.example.projectoneex2.api;
 
-import static java.lang.System.exit;
-
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.projectoneex2.Comment;
 import com.example.projectoneex2.ImagePost;
-import com.example.projectoneex2.ImagePostDao;
 import com.example.projectoneex2.MyApplication;
 import com.example.projectoneex2.R;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -22,7 +18,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,15 +52,11 @@ public class PostAPI {
         jsonObject1.addProperty("date", dateFormat.format(System.currentTimeMillis()));
         jsonObject1.add("comments", new JsonArray()); // Empty array for comments
         jsonObject1.add("likesID", new JsonArray()); // Empty array for likes
-
         // Assuming tokenString is your token with "Bearer" prefix
         String tokenWithoutPrefix = token.substring(10);
         // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-
 // Now you can use tokenWithoutSuffix
-
-
 // Now you can use tokenWithoutPrefix in your Authorization header
         Call<ResponseBody> call = webServiceAPI.createPost("Bearer " + tokenWithoutSuffix,jsonObject1);
         call.enqueue(new Callback<ResponseBody>() {
@@ -77,6 +68,7 @@ public class PostAPI {
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
                 Log.d("Request Details", "Body: " + jsonObject1);
+
             }
 
             @Override
@@ -103,6 +95,7 @@ public class PostAPI {
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
                 Log.d("Request Details", "Body: " + jsonObject1);
+
             }
 
             @Override
@@ -141,6 +134,7 @@ public class PostAPI {
                             String content = jsonObject.getString("content");
                             String time = jsonObject.getString("date");
                             String img = jsonObject.getString("img");
+                            String profilePic=jsonObject.getString("profilePic");
                             ImagePost new_post = new ImagePost(author, content, img, img, time,ID);
                             JSONArray commentsArray = jsonObject.getJSONArray("comments");
                             for (int j = 0; j < commentsArray.length(); j++) {
@@ -153,6 +147,7 @@ public class PostAPI {
                                     JSONArray likeArray = commentObject.getJSONArray("likes");
                                     int a = likeArray.length();
                                     comment.setLikes(a);
+                                    comment.setId(commentObject.getString("_id"));
                                 }
                                 // Add comment to post
                                 new_post.addComment(comment);
@@ -192,7 +187,7 @@ public class PostAPI {
 
 
 // Now you can use tokenWithoutPrefix in your Authorization header
-        Call<ResponseBody> call = webServiceAPI.likePost("Bearer " + tokenWithoutSuffix,post.getId());
+        Call<ResponseBody> call = webServiceAPI.likePost("Bearer " + tokenWithoutSuffix, post.get_id());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -202,6 +197,7 @@ public class PostAPI {
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
                 Log.d("Request Details", "Body: " + post.getId());
+
             }
 
             @Override
@@ -229,6 +225,7 @@ public class PostAPI {
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
                 Log.d("Request Details", "Body: " + postID + " " + commentID);
+
             }
 
             @Override
@@ -240,5 +237,60 @@ public class PostAPI {
             }
         });
 
+    }
+    public void delete(ImagePost post, String token) {
+        // Assuming tokenString is your token with "Bearer" prefix
+        String tokenWithoutPrefix = token.substring(10);
+        // Assuming tokenString is your token
+        String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+        Call<ResponseBody> call = webServiceAPI.deletePost("Bearer " + tokenWithoutSuffix, post.get_id());
+        final Boolean[] indicator = new Boolean[1];
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.e("API Error", "Response not successful: " + response.code());
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+                Log.d("Request Details", "Body: " + post.getId());
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+                Log.d("Request Details", "Body: " + post.getId());
+            }
+        });
+    }
+
+    public void deleteComment(String postID, String commentID, String token) {
+        // Assuming tokenString is your token with "Bearer" prefix
+        String tokenWithoutPrefix = token.substring(10);
+        // Assuming tokenString is your token
+        String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+        Call<ResponseBody> call = webServiceAPI.commentDelete("Bearer " + tokenWithoutSuffix,postID,commentID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                response.body();
+                Log.e("API Error", "Response not successful: " + response.code());
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+                Log.d("Request Details", "Body: " + postID + " " + commentID);
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+
+            }
+        });
     }
 }

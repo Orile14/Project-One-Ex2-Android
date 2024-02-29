@@ -68,21 +68,24 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     private PostsListAdapter adapter;
     int position;
     private String nickname;
+    private String username;
     private AlertDialog dialog;
     private Drawable d;
-    private AppDB db;
+    public static AppDB db;
     private String token="1";
     private ImagePostDao postDao    ;
     PostAPI postAPI;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.token = getIntent().getStringExtra("TOKEN_KEY");
+        this.username = getIntent().getStringExtra("USERNAME_KEY");
         //theme operation(darkmode if needed)
         loadThemePreference();
         applyTheme();
+        db= Room.databaseBuilder(this,AppDB.class,"PostsDB").allowMainThreadQueries().build();
+        postDao= db.imagePostDao();
         setContentView(R.layout.activity_feed);
         viewModel=new ViewModelProvider(this).get(PostsViewModel.class);
         viewModel.getPosts().observe(this, imagePosts -> {
@@ -273,13 +276,12 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         } else {
             Drawable empty = imageViewProfile.getDrawable();
             // Set bounds to 0 to hide the image
-            empty.setBounds(0, 0, 0, 0);
             String emtypic=drawableToString(empty);
             // If it's a shared post, add a new post with the username, post content, and selected image
             ImagePost newPost = new ImagePost(nickname, postText, drawableToString(postImage), emtypic, timeString);
             viewModel.add(newPost,token);
 //            // Reset the share flag
-//            share = false;
+            share = false;
         }
         // Notify the adapter that the data set has changed
         adapter.notifyDataSetChanged();
@@ -356,14 +358,13 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     // Method called when the delete button is clicked for a post
     @Override
     public void onDeletsButtonClick(int position, PostsListAdapter adapter) {
-        // Remove the post at the specified position
-        ImagePost post=posts.remove(position);
-        // Notify the adapter of the data change
-        adapter.notifyDataSetChanged();
+            viewModel.delete(posts.get(position), token);
+    }
+    private void showToastDelete() {
+        Toast.makeText(this, "you cant delete posts that are not yours!", Toast.LENGTH_SHORT).show();
     }
     // Define a method to show the comment dialog for a post at a given position
     private void showCommentDialog(int position) {
-
         // Create an AlertDialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the LayoutInflater
@@ -375,7 +376,6 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         // Find the RecyclerView and SwipeRefreshLayout in the custom layout
         RecyclerView lstComments = dialogView.findViewById(R.id.dialogRecyclerView);
         SwipeRefreshLayout refreshLayout = dialogView.findViewById(R.id.dialogRefreshLayout);
-
         // Create a new CommentListAdapter for the dialog RecyclerView
         final CommentListAdapter adapter1 = new CommentListAdapter(this, position);
         lstComments.setAdapter(adapter1);
@@ -396,13 +396,13 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
             // Refresh the main adapter
             adapter.notifyDataSetChanged();
             // Hide the dialog
+            this.dialog=null;
             dialog.hide();
         });
         // Find the FloatingActionButton for adding a comment
         FloatingActionButton add = dialogView.findViewById(R.id.floatingActionButton5);
         // Set click listener for adding a comment
         add.setOnClickListener(view -> showAddCommentDialog(position, adapter1));
-
         // Set refresh listener for the SwipeRefreshLayout
         refreshLayout.setOnRefreshListener(() -> {
             // Stop the refreshing indicator
@@ -433,7 +433,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Add a new comment to the post with provided content, nickname, and profile image
                 Comment c=new Comment(nickname, updatedContent,"aa");
                 // Refresh the UI by notifying the adapter of the data change
-                viewModel.addComment(post.getId(),c,token);
+                viewModel.addComment(post.get_id(),c,token);
             }
         });
 
@@ -545,9 +545,11 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     public void onCommentDeleteButtonClick(int position, int postPosition, CommentListAdapter adapter1) {
         // Get the post object at the specified position
+        String postID = posts.get(postPosition).get_id();
         ImagePost post = posts.get(postPosition);
         // Remove the comment at the specified position from the post's comments list
-        post.getCommentsList().remove(position);
+        String commentID=post.getCommentsList().get(position).getId();
+        viewModel.deleteComment(postID,commentID,token);
         // Notify the adapter of the data change
         adapter1.notifyDataSetChanged();
     }
@@ -577,7 +579,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         }
         adapter.notifyDataSetChanged();
         // Perform your API call here to update the server with the like status change
-        viewModel.commentLike(post.getId(), post.getCommentsList().get(position).getAuthor(), token);
+        viewModel.commentLike(post.get_id(), post.getCommentsList().get(position).getAuthor(), token);
     }
 
 

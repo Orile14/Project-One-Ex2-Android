@@ -15,7 +15,7 @@ import retrofit2.http.Path;
 
 public interface WebServiceAPI {
 
-    @GET("posts/get")
+    @GET("posts/")
     Call<ResponseBody> getPosts();
     @Headers("Content-Type: application/json")
     @POST("tokens")
@@ -48,7 +48,13 @@ public interface WebServiceAPI {
                                      @Body JsonObject post);
 
 
-    @DELETE("posts/{id}")
-    Call<Void> deletePost(@Path("id") int id);
+    @DELETE("posts/delete/{id}")
+    Call<ResponseBody> deletePost(@Header("Authorization") String token,@Path("id") String id);
+    @DELETE("posts/comment/{id}/{commentId}") // Corrected URL format
+    Call<ResponseBody> commentDelete(
+            @Header("Authorization") String token,
+            @Path("id") String postId,
+            @Path("commentId") String commentId
+    );
 
 }

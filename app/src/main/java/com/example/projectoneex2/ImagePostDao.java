@@ -15,7 +15,7 @@ public interface ImagePostDao {
     @Query("SELECT * FROM image_posts WHERE id = :id")
     ImagePost show(int id);
     @Insert
-    void insertImagePost(ImagePost...imagePosts);
+    void insertImagePost(List<ImagePost> imagePosts);
     @Delete
     void deleteImagePost(ImagePost...imagePosts);
     @Update

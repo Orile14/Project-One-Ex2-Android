@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 
 public class Comment  {
 
-    private int id;
+    private String id;
     // Comment attributes
     private boolean like = false;
     private final String author;
@@ -32,10 +32,10 @@ public class Comment  {
         this.content = content;
         this.date=date;
     }
-    public int getId() {
+    public String getId() {
         return id;
     }
-    public void setId(int picID) {
+    public void setId(String picID) {
         this.id = picID;
     }
     public static String bitmapToString(Bitmap bitmap) {
