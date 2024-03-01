@@ -2,6 +2,7 @@ package com.example.projectoneex2.api;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.projectoneex2.Comment;
@@ -10,6 +11,7 @@ import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.MyApplication;
 import com.example.projectoneex2.Profile;
 import com.example.projectoneex2.R;
+import com.example.projectoneex2.User;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -310,6 +312,7 @@ public class PostAPI {
     }
 
     public void getUserId(String token) {
+
         String tokenWithoutPrefix = token.substring(10);
         // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
@@ -378,7 +381,7 @@ public class PostAPI {
 
     }
 
-    public void getProfilePosts(String currentId,MutableLiveData postListData, String token) {
+    public void getProfilePosts(String currentId, MutableLiveData postListData, String token) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -386,7 +389,7 @@ public class PostAPI {
                 String tokenWithoutPrefix = token.substring(10);
                 // Assuming tokenString is your token
                 String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-                Call<ResponseBody> call = webServiceAPI.getUserPosts("Bearer " + tokenWithoutSuffix,currentId);
+                Call<ResponseBody> call = webServiceAPI.getUserPosts("Bearer " + tokenWithoutSuffix, currentId);
                 try {
 
                     // Synchronously execute the request
@@ -452,5 +455,43 @@ public class PostAPI {
                 }
             }
         }).start();
+    }
+
+    public void getFriends(String token, String id) {
+        String tokenWithoutPrefix = token.substring(10);
+        // Assuming tokenString is your token
+        String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+        Call<ResponseBody> call = webServiceAPI.getFriends("Bearer " + tokenWithoutSuffix, id);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    String responseBodyString = response.body().string();
+                    JSONObject jsonObject = new JSONObject(responseBodyString);
+                    String userId = jsonObject.getString("ownerId");
+                    FeedActivity.userId = userId;
+                    // Now you have the user ID, you can use it as needed
+                    Log.d("User ID", "User ID: " + userId);
+                } catch (IOException | JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                Log.e("API Error", "Response not successful: " + response.code());
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+
+            }
+        });
     }
 }

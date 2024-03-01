@@ -17,7 +17,8 @@ import retrofit2.http.Path;
 public interface WebServiceAPI {
     @GET("users/{id}/posts")
     Call<ResponseBody> getUserPosts(@Header("Authorization") String token, @Path("id") String id);
-
+    @GET("users/{id}/friends")
+    Call<ResponseBody> getFriends(@Header("Authorization") String token, @Path("id") String id);
     @GET("posts/")
     Call<ResponseBody> getPosts(@Header("Authorization") String token);
     @Headers("Content-Type: application/json")

@@ -38,7 +38,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         public Button likeButton;
         public ImageButton editButton;
         public ImageButton deleteButton;
-        public ImageButton AuthorPic;
+        public ImageView AuthorPic;
         public Button share;
         private final Button commentButton;
         private final TextView commentCounter;
@@ -88,33 +88,36 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
     // Method to bind data to a post item view
     @Override
     public void onBindViewHolder(PostViewHolder holder, int position) {
-        // Set click listeners for various action buttons
-        holder.editButton.setOnClickListener(v -> {
-            if (postActionsListener != null) {
-                postActionsListener.onEditButtonClick(position);
-            }
-        });
-        holder.share.setOnClickListener(v -> {
-            if (postActionsListener != null) {
-                postActionsListener.onShareButtonClick();
-            }
-        });
-        holder.deleteButton.setOnClickListener(v -> {
-            if (postActionsListener != null) {
-                postActionsListener.onDeletsButtonClick(position, adapter);
-            }
-        });
-        holder.commentButton.setOnClickListener(v -> postActionsListener.onCommentButtonClick(position));
-        holder.likeButton.setOnClickListener(v -> {
-            if (postActionsListener != null) {
-                postActionsListener.onLikeButtonClick(position);
-            }
-        });
-        holder.ivPic.setOnClickListener(v -> {
-            if (postActionsListener != null) {
-                postActionsListener.onPictureClick(position);
-            }
-        });
+        if (postActionsListener != null) {
+
+
+            holder.editButton.setOnClickListener(v -> {
+                if (postActionsListener != null) {
+                    postActionsListener.onEditButtonClick(position);
+                }
+            });
+            holder.share.setOnClickListener(v -> {
+                if (postActionsListener != null) {
+                    postActionsListener.onShareButtonClick();
+                }
+            });
+            holder.deleteButton.setOnClickListener(v -> {
+                if (postActionsListener != null) {
+                    postActionsListener.onDeletsButtonClick(position, adapter);
+                }
+            });
+            holder.commentButton.setOnClickListener(v -> postActionsListener.onCommentButtonClick(position));
+            holder.likeButton.setOnClickListener(v -> {
+                if (postActionsListener != null) {
+                    postActionsListener.onLikeButtonClick(position);
+                }
+            });
+            holder.AuthorPic.setOnClickListener(v -> {
+                if (postActionsListener != null) {
+                    postActionsListener.onPictureClick(position);
+                }
+            });
+        }
 
         // Bind post data to the view holder elements
         if (posts != null) {

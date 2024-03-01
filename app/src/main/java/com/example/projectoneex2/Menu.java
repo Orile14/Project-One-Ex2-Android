@@ -1,5 +1,7 @@
 package com.example.projectoneex2;
 
+
+import static com.example.projectoneex2.ImagePost.stringToDrawable;
 import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
@@ -27,9 +29,11 @@ public class Menu extends AppCompatActivity {
         setContentView(R.layout.activity_menu);
         // Initialize views
         ImageView profilePic = findViewById(R.id.profileImage);
+        profilePic.setImageDrawable(stringToDrawable(Login.profilePic));
         ImageButton home = findViewById(R.id.imageButton2);
         ToggleButton darkModeToggle = findViewById(R.id.toggleButton2);
         TextView textView = findViewById(R.id.username);
+        textView.setText(Login.nickname);
         Button logout = findViewById(R.id.Logout);
         // Set toggle button state
         darkModeToggle.setChecked(isDarkTheme);
@@ -54,8 +58,7 @@ public class Menu extends AppCompatActivity {
     }
     // Method to navigate to the feed activity
     private void feed() {
-        Intent i = new Intent(this, FeedActivity.class);
-        startActivity(i);
+        finish();
     }
     // Method to load theme preference from SharedPreferences
     private void loadThemePreference() {
@@ -71,4 +74,5 @@ public class Menu extends AppCompatActivity {
     private void applyTheme() {
         setTheme(isDarkTheme ? R.style.AppTheme_Dark : R.style.AppTheme_Light);
     }
+
 }

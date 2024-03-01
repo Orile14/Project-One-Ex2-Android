@@ -1,10 +1,12 @@
 package com.example.projectoneex2.viewmodel;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.projectoneex2.Comment;
 import com.example.projectoneex2.ImagePost;
+import com.example.projectoneex2.User;
 import com.example.projectoneex2.repositoy.PostsRepository;
 
 import java.util.List;
@@ -65,6 +67,10 @@ public class PostsViewModel extends ViewModel {
 
     public void getUserId(String token) {
         mRepository.getUserId(token);
+    }
+
+    public void getFriends(String token, String id) {
+         mRepository.getFriends(token,id);
     }
 
 

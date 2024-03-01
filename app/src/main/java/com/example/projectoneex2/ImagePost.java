@@ -135,15 +135,20 @@ public class ImagePost   {
     }
     public static Bitmap stringToBitmap(String encodedString) {
         if (encodedString != null) {
-
-            String[] parts = encodedString.split(",");
-            if (parts.length != 2) {
-                // Handle invalid base64 string
-                return null;
+            if (encodedString.startsWith("data")) {
+                String[] parts = encodedString.split(",");
+                if (parts.length != 2) {
+                    // Handle invalid base64 string
+                    return null;
+                }
+                String base64Data = parts[1];
+                byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             }
-            String base64Data = parts[1];
-            byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            else {
+                byte[] bytes = Base64.decode(encodedString, Base64.DEFAULT);
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            }
         }
         return null;
     }

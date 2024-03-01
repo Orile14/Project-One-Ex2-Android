@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:backgroundTint="@color/background_color"
+
     android:layout_height="match_parent">
 
     <!-- Search Bar -->
@@ -55,7 +56,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-
         android:layout_below="@+id/searchBar"
         android:padding="8dp">
 
@@ -80,17 +80,23 @@
                 android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:layout_weight="1"
+                android:layout_weight="8"
                 android:gravity="start"
                 android:inputType="textMultiLine"
                 android:lines="2"
                 android:maxLines="3"
-                android:padding="8dp" />
+                android:padding="8dp"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#4CAF50"
+                android:text="Friend Request" />
         </LinearLayout>
-
     </LinearLayout>
 
     <FrameLayout
@@ -101,15 +107,12 @@
         android:layout_below="@+id/middleInputBoxLayout"
         android:layout_weight="1"
         android:padding="16dp">
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:backgroundTint="#FFFFFF"
-            android:foregroundTint="#FFFFFF">
 
-
+            >
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/lstPosts"
                 android:layout_width="match_parent"
@@ -160,7 +163,7 @@
             android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_notification"
 
-            app:tint="#0E0E0E" />
+            app:tint="#FFFFFF" />
 
 
         <ImageButton
@@ -171,7 +174,7 @@
             android:background="@drawable/circular_border_background"
             app:srcCompat="@drawable/ic_menu"
 
-            app:tint="#FFFFFF" />
+            app:tint="#000000" />
 
         <ToggleButton
             android:id="@+id/toggleButton2"

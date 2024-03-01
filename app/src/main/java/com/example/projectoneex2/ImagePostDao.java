@@ -14,10 +14,13 @@ public interface ImagePostDao {
     List<ImagePost> index();
     @Query("SELECT * FROM image_posts WHERE id = :id")
     ImagePost show(int id);
+
     @Insert
     void insertImagePost(List<ImagePost> imagePosts);
     @Delete
     void deleteImagePost(ImagePost...imagePosts);
     @Update
     void updateImagePost(ImagePost...imagePosts);
+    @Query("DELETE FROM image_posts")
+    void deleteAllRecords();
 }

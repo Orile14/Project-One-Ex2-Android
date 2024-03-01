@@ -75,59 +75,47 @@ public class UserAPI {
             }
         }).start();
     }
-    public void getLogin( String password, String username) {
-        // Execute the network request in a background thread
-        new Thread(new Runnable() {
+    public void getLogin(String password, String username) {
+        LoginRequest loginRequest = new LoginRequest(username, password);
+        String jsonString = "{username:" + username + ", password:" + password + "}";
+        Gson gson = new Gson();
+        JsonObject jsonObject1 = gson.fromJson(jsonString, JsonObject.class);
+        Call<ResponseBody> call = webServiceAPI.getLogin(jsonObject1);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void run() {
-                String token = null;
-                LoginRequest loginRequest = new LoginRequest(username, password);
-                String jsonString = "{username:" + username + ", password:" + password + "}";
-                Gson gson = new Gson();
-                JsonObject jsonObject1 = gson.fromJson(jsonString, JsonObject.class);
-                Call<ResponseBody> call = webServiceAPI.getLogin(jsonObject1);
-                try {
-                    Response<ResponseBody> response = call.execute();
-                    if (response.isSuccessful()) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
                         String responseBodyString = response.body().string();
-                        JSONObject jsonObject = new JSONObject(responseBodyString);
-                        Login.nickname = jsonObject.getString("nick");
-                        Login.profilePic = jsonObject.getString("profilepic");
-                        Headers headers = response.headers();
-                        for (int i = 0, size = headers.size(); i < size; i++) {
-                            Log.d(headers.name(i), headers.value(i));
+                        if (!responseBodyString.equals("null")) {
+                            JSONObject jsonObject = new JSONObject(responseBodyString);
+                            Login.nickname = jsonObject.getString("nick");
+                            Login.profilePic = jsonObject.getString("profilepic");
                         }
-                        Log.e("API Error", "Response not successful: " + response.code());
-                        Log.d("Request Details", "URL: " + call.request().url());
-                        Log.d("Request Details", "Method: " + call.request().method());
-                        Log.d("Request Details", "Headers: " + call.request().headers());
-                        Log.d("Request Details", "Body: " + jsonObject1);
-                    } else {
-                        // Response not successful, handle error
-                        // Log the error
-                        Log.e("API Error", "Response not successful: " + response.code());
-                        Headers headers = response.headers();
-                        for (int i = 0, size = headers.size(); i < size; i++) {
-                            Log.d(headers.name(i), headers.value(i));
-                        }
-                        Log.d("Request Details", "URL: " + call.request().url());
-                        Log.d("Request Details", "Method: " + call.request().method());
-                        Log.d("Request Details", "Headers: " + call.request().headers());
-                        Log.d("Request Details", "Body: " + username);
-
-                        // Exit the application or handle the error as required
-
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                        // Handle the error as required
                     }
-                } catch (IOException e) {
-                    e.printStackTrace(); // Log the error
-                    exit(1777); // Exit the application or handle the error as required
-
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                } else {
+                    // Response not successful, handle error
+                    Log.e("API Error", "Response not successful: " + response.code());
                 }
-
+                // Log request details
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+                Log.d("Request Details", "Body: " + jsonObject1);
             }
-        }).start();
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+                // Handle the error as required
+                Log.d("Request Details", "URL: " + call.request().url());
+                Log.d("Request Details", "Method: " + call.request().method());
+                Log.d("Request Details", "Headers: " + call.request().headers());
+            }
+        });
     }
 
 

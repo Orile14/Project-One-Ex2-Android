@@ -70,7 +70,6 @@ public class Login extends AppCompatActivity {
             this.viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         }
         viewModel.getLogin(username, password);
-
         viewModel.getToken(username, password).observe(this, token1 -> {
             token= token1;
             if (!Objects.equals(token, "")&&token!=null){

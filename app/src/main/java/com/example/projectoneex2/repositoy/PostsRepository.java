@@ -1,5 +1,6 @@
 package com.example.projectoneex2.repositoy;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.projectoneex2.AppDB;
@@ -7,6 +8,7 @@ import com.example.projectoneex2.Comment;
 import com.example.projectoneex2.FeedActivity;
 import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.ImagePostDao;
+import com.example.projectoneex2.User;
 import com.example.projectoneex2.api.PostAPI;
 
 import java.util.List;
@@ -14,7 +16,7 @@ import java.util.List;
 public class PostsRepository {
     private PostListData postListData;
 
-    private PostAPI postApi;
+    private PostAPI postAPI;
     private String token;
     AppDB db;
     ImagePostDao dao;
@@ -23,9 +25,14 @@ public class PostsRepository {
 
         db = FeedActivity.db;
         dao = db.imagePostDao();
-//        this.postApi = postApi;
+        this.postAPI = new PostAPI();
     }
 
+   public void getFriends(String token,String id) {
+        PostAPI postAPI = new PostAPI();
+       postAPI.getFriends(token,id);
+
+    }
     public void like(ImagePost post, String token) {
         PostAPI postAPI = new PostAPI();
         postAPI.like(post,token);
@@ -33,26 +40,26 @@ public class PostsRepository {
     }
 
     public void commentLike(String postID, String commentID, String token) {
-        PostAPI postAPI = new PostAPI();
+
         postAPI.CommentLike(postID,commentID,token);
         postAPI.get(postListData,token);
 
     }
 
     public void addComment(String id, Comment updatedContent, String token) {
-        PostAPI postAPI = new PostAPI();
+
         postAPI.createComment(id,token,updatedContent,postListData);
         postAPI.get(postListData,token);
     }
 
     public void delete(ImagePost imagePost, String token) {
-        PostAPI postAPI = new PostAPI();
+
         postAPI.delete(imagePost,token);
         postAPI.get(postListData,token);
     }
 
     public void deleteComment(String postID, String commentID, String token) {
-        PostAPI postAPI = new PostAPI();
+
         postAPI.deleteComment(postID,commentID,token);
         postAPI.get(postListData,token);
     }
@@ -61,7 +68,7 @@ public class PostsRepository {
     }
 
     public void editComment(String id, String id1, String updatedContent, String token) {
-        PostAPI postAPI = new PostAPI();
+
         postAPI.editComment(id,id1,updatedContent,token);
         postAPI.get(postListData,token);
     }
@@ -79,11 +86,6 @@ public class PostsRepository {
         @Override
         protected void onActive() {
             super.onActive();
-            new Thread(() -> {
-                if (dao.index().size()!=0){
-                postListData.postValue(dao.index());}
-            }).start();
-            PostAPI postAPI = new PostAPI();
             postAPI.get(this,token);
         }
     }
@@ -93,7 +95,6 @@ public class PostsRepository {
         return postListData;
     }
     public void add(ImagePost post,String token) {
-        PostAPI postAPI = new PostAPI();
         postAPI.create(post,token);
         postAPI.get(postListData,token);
     }
