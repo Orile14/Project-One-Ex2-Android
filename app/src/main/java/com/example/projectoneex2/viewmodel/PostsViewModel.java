@@ -69,9 +69,6 @@ public class PostsViewModel extends ViewModel {
         mRepository.getUserId(token);
     }
 
-    public void getFriends(String token, String id) {
-         mRepository.getFriends(token,id);
-    }
 
 
     // Method to delete an existing image post from the repository
@@ -80,7 +77,11 @@ public class PostsViewModel extends ViewModel {
 //    }
 
     // Method to reload the data from the repository
-//    public void reload() {
-//        mRepository.reload();
-//    }
+    public void reload(String token) {
+        mRepository.reload();
+    }
+
+    public void editPost(ImagePost post, String token) {
+        mRepository.editPost(post,token);
+    }
 }

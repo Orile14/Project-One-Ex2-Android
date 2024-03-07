@@ -9,6 +9,8 @@ import static com.example.projectoneex2.Login.userList;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.CursorWindow;
+import android.database.sqlite.SQLiteBlobTooBigException;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -53,9 +55,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,6 +84,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     public static String userId;
     public static AppDB db;
     private String token;
+    private Boolean update=false;
     private ImagePostDao postDao    ;
     private List<User> Friends;
     PostAPI postAPI;
@@ -89,6 +94,14 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         super.onCreate(savedInstanceState);
         this.token = getIntent().getStringExtra("TOKEN_KEY");
         this.username = getIntent().getStringExtra("USERNAME_KEY");
+        try {
+            Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
+            field.setAccessible(true);
+            field.set(null, 10 * 512 * 512); //the 100MB is the new size
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //room database setup for the posts
         db= Room.databaseBuilder(getApplicationContext(), AppDB.class, "posts").allowMainThreadQueries().fallbackToDestructiveMigration().build();
         postDao=db.imagePostDao();
         //theme operation(darkmode if needed)
@@ -100,17 +113,27 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         viewModel.getUserId(token) ;
         ImageView imageViewPic = findViewById(R.id.imageViewPic);
         viewModel.getPosts(token).observe(this, imagePosts -> {
-            adapter.setPosts(imagePosts);
-            for (ImagePost i:imagePosts){
-                postDao.updateImagePost(imagePosts.get(imagePosts.indexOf(i)));
+            if (update==true){
+                viewModel.reload(token);
+                update=false;
             }
+            adapter.setPosts(imagePosts);
+            adapter.notifyDataSetChanged();
+            postDao.deleteAllRecords(username);
+            for (ImagePost post:imagePosts){
+               post.setDaoID(username);
+            }
+            postDao.insertImagePost(imagePosts);
             imageViewPic.setImageDrawable(stringToDrawable(Login.profilePic));
 //            viewModel.getFriends(token,userId);
             if (dialog!=null){
                 dialog.hide();
+            }
+            if (dialog!=null){
                 showCommentDialog(position);
             }
         });
+
         //profile pic of the user
         imageViewProfile = findViewById(R.id.imageButtona);
         ImageButton menuButton = findViewById(R.id.menuButton);
@@ -118,7 +141,6 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         //marking darkbutton state
         darkModeToggle.setChecked(isDarkTheme);
         //only 1 user therefore the first one
-
         //layout for the posts
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         RecyclerView lstPosts = findViewById(R.id.lstPosts);
@@ -127,7 +149,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         this.adapter = adapter;
         //so we can preform on click actions from the post
         adapter.setPostActionListener(this);
-        adapter.setPosts(postDao.index());
+        adapter.setPosts(postDao.indexById(username));
         lstPosts.setAdapter(adapter);
         lstPosts.setLayoutManager(new LinearLayoutManager(this));
         editPost = findViewById(R.id.edtWhatsOnYourMindMiddle);
@@ -150,6 +172,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
 
         refreshLayout.setOnRefreshListener(() -> {
             // Stop the refreshing indicator
+            viewModel.reload(token);
             refreshLayout.setRefreshing(false);
         });
 
@@ -159,6 +182,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     private void openMenu() {
         Intent i = new Intent(this, Menu.class);
         i.putExtra("NICK",Login.nickname);
+        i.putExtra("TOKEN_KEY", token);
 
         startActivity(i);
     }
@@ -253,7 +277,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         Intent i = new Intent(this, Profile.class);
         i.putExtra("TOKEN_KEY", token);
         i.putExtra("USERNAME_KEY", adapter.getPosts().get(position).getAuthor() );
-
+        i.putExtra("ID",adapter.getPosts().get(position).getPostOwnerID());
         startActivity(i);
 
     }
@@ -263,6 +287,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         // Get the post at the specified position
          ImagePost post=adapter.getPosts().get(position);
         viewModel.like(post,token);
+        viewModel.reload(token);
     }
 
     // Define a method to add a new post
@@ -298,17 +323,22 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
             String emtypic=drawableToString(empty);
             // Create a new post object with the username, post content, and empty image
             ImagePost newPost = new ImagePost(nickname, postText, emtypic, emtypic, timeString);
+            newPost.setDaoID(username);
             viewModel.add(newPost,token);
+            postDao.insertImagePost(Collections.singletonList(newPost));
         } else {
             Drawable empty = imageViewProfile.getDrawable();
             // Set bounds to 0 to hide the image
             String emtypic=drawableToString(empty);
             // If it's a shared post, add a new post with the username, post content, and selected image
             ImagePost newPost = new ImagePost(nickname, postText, drawableToString(postImage), emtypic, timeString);
+            newPost.setDaoID(username);
             viewModel.add(newPost,token);
+            postDao.insertImagePost(Collections.singletonList(newPost));
 //            // Reset the share flag
             share = false;
         }
+        update=true;
         // Notify the adapter that the data set has changed
         adapter.notifyDataSetChanged();
         // Reset the image view to the default placeholder
@@ -353,15 +383,25 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     private void showToast() {
         Toast.makeText(this, "You can't edit posts that are not yours!", Toast.LENGTH_SHORT).show();
     }
+    private void showEditToast() {
+        Toast.makeText(this, "You can't edit comments that are not yours!", Toast.LENGTH_SHORT).show();
+    }
+    private void showDeleteToast() {
+        Toast.makeText(this, "You can't delete comments that are not yours!", Toast.LENGTH_SHORT).show();
+    }
+
 
     // Method called when the edit button is clicked for a post
     @Override
     public void onEditButtonClick(int position) {
         // Get the post at the specified position
         ImagePost post = adapter.getPosts().get(position);
-        // Check if the post author is the current user
-        // If the current user is the author, show the edit dialog
-        showEditDialog(position);
+        if (post.getPostOwnerID().equals(userId)){
+            showEditDialog(position);
+        }
+        else {
+           showToast();
+        }
     }
 
     // Method called when the share button is clicked for a post
@@ -384,6 +424,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
             return;
         }
             viewModel.delete(adapter.getPosts().get(position), token);
+        viewModel.reload(token);
         postDao.deleteImagePost(adapter.getPosts().get(position));
     }
     private void showToastDelete() {
@@ -516,6 +557,9 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 if (d!=null) {
                     post.setUserpicDraw(d);
                 }
+                viewModel.editPost(post,token);
+                postDao.updateImagePost(post);
+                update=true;
                 // Refresh the UI by notifying the adapter of the data change
                 adapter.notifyDataSetChanged();
             }
@@ -536,7 +580,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     public void onCommentEditButtonClick(int position, int postPosition, CommentListAdapter adapter1) {
         if (!FeedActivity.userId.equals(adapter.getPosts().get(postPosition).getCommentsList().get(position).getCommentOwnerID())){
-            showToast();
+            showEditToast();
             return;
         }
         // Create an AlertDialog builder
@@ -550,7 +594,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         // Find the EditText in the custom layout
         final EditText editText = dialogView.findViewById(R.id.editText);
         // Set initial text in the EditText
-        editText.setText(posts.get(postPosition).getCommentsList().get(position).getContent());
+        editText.setText(adapter.getPosts().get(postPosition).getCommentsList().get(position).getContent());
         // Set positive button (Save) click listener
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
@@ -558,7 +602,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Get the updated content from the EditText
                 String updatedContent = editText.getText().toString().trim();
                 // Get the post object at the specified position
-                ImagePost post = posts.get(postPosition);
+                ImagePost post = adapter.getPosts().get(postPosition);
 
                 viewModel.editComment(post.get_id(),post.getCommentsList().get(position).getId(),updatedContent,token);
                 postDao.updateImagePost(post);
@@ -577,7 +621,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     @Override
     public void onCommentDeleteButtonClick(int position, int postPosition, CommentListAdapter adapter1) {
         if (!FeedActivity.userId.equals(adapter.getPosts().get(postPosition).getCommentsList().get(position).getCommentOwnerID())){
-            showToast();
+            showToastDelete();
             return;
         }
         // Get the post object at the specified position
@@ -592,7 +636,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
 
     public void onCommentLikeButtonClick(int position, int postPosition, CommentListAdapter adapter1, TextView likeCounter) {
         // Get the post object at the specified position
-        ImagePost post = posts.get(postPosition);
+        ImagePost post = adapter.getPosts().get(postPosition);
         // Get the number of likes for the comment at the specified position
         int likes = post.getCommentsList().get(position).getLikes();
         // Check if the comment is currently not liked
@@ -615,7 +659,8 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         }
         adapter.notifyDataSetChanged();
         // Perform your API call here to update the server with the like status change
-        viewModel.commentLike(post.get_id(), post.getCommentsList().get(position).getAuthor(), token);
+        viewModel.commentLike(post.get_id(), post.getCommentsList().get(position).getId(), token);
+
     }
 
 

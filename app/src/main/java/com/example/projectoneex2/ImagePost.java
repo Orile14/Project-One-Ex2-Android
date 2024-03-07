@@ -26,22 +26,21 @@ public class ImagePost   {
 
     @PrimaryKey (autoGenerate = true)
     private int id;
-
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
-    }
-
     private String _id;
-    // Define your request cod here
+    private String daoID;
     private String comments ;
     private boolean like = false; // Indicates if the post is liked
     private int picID = -1;
     private String postOwnerID;
-    int commentsNum = 0;
+    int commentsNum = 0; private  String author;
+    private String content;
+    private int profileImage;
+    private String userpic = null;
+    private  String time;
+    private int likes = 0;
+    private String AuthorPic;
+
+
 
     public int getCommentsNum() {
         return commentsNum;
@@ -54,24 +53,13 @@ public class ImagePost   {
     public void setAuthor(String author) {
         this.author = author;
     }
-
-    private  String author;
-    private String content;
-
     public void setTime(String time) {
         this.time = time;
     }
-
-    private  String time;
-    private int likes = 0;
-    private String AuthorPic;
-
     public void setProfileImage(int profileImage) {
         this.profileImage = profileImage;
     }
 
-    private int profileImage;
-    private String userpic = null;
 
     // Constructor for posts with an existing ID and profile image resource ID
     public ImagePost(String author, String content, int id, int profileImage, String time) {
@@ -100,6 +88,13 @@ public class ImagePost   {
         this.AuthorPic = profileImage;
         this.time = time;
         this._id=id;
+    }
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
     @TypeConverter
     public String fromList(List<Comment> countryLang) {
@@ -190,6 +185,13 @@ public class ImagePost   {
 
     public int getId() {
         return id;
+    }
+    public String getDaoID() {
+        return daoID;
+    }
+
+    public void setDaoID(String daoID) {
+        this.daoID = daoID;
     }
 
     // Setter method for author's profile picture as Bitmap

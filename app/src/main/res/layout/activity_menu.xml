@@ -110,20 +110,20 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_marginBottom="10dp"
-                android:id="@+id/textView5"
+                android:id="@+id/edit"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
                 android:layout_weight="1"
+                android:background="@drawable/menu_buttons"
                 android:gravity="center"
-                android:text="@string/messages"
-                android:textStyle="bold"
+                android:text="Edit Profile"
                 android:textSize="20sp"
-                android:background="@drawable/menu_buttons" />
+                android:textStyle="bold" />
 
 
             <TextView
-                android:id="@+id/textView6"
+                android:id="@+id/friends"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginBottom="10dp"
@@ -142,7 +142,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/pictures"
+                android:text="Friend Requests"
                 android:textSize="20sp"
                 android:background="@drawable/menu_buttons"/>
 
@@ -169,24 +169,22 @@
                 android:gravity="center"
                 android:text="@string/videos"
                 android:background="@drawable/menu_buttons"/>
-
-            <TextView
-                android:layout_marginBottom="10dp"
-                android:id="@+id/textView11"
-                android:layout_width="match_parent"
-                android:textStyle="bold"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textSize="20sp"
-                android:gravity="center"
-                android:text="@string/marketplace"
-                android:background="@drawable/menu_buttons"/>
-
             <Button
                 android:id="@+id/Logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/logout"
+                android:textStyle="bold"
+                android:background="@drawable/radius_logout"
+
+                android:layout_marginBottom="10dp"
+                app:rippleColor="#F81605" />
+
+            <Button
+                android:id="@+id/Delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Account"
                 android:textStyle="bold"
                 android:background="@drawable/radius_logout"
                 app:rippleColor="#F81605" />

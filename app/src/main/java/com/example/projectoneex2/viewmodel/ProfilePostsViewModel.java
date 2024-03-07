@@ -3,9 +3,8 @@ package com.example.projectoneex2.viewmodel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.projectoneex2.Comment;
 import com.example.projectoneex2.ImagePost;
-import com.example.projectoneex2.repositoy.PostsRepository;
+import com.example.projectoneex2.Request;
 import com.example.projectoneex2.repositoy.ProfilePostsRepositry;
 
 import java.util.List;
@@ -37,4 +36,9 @@ public class ProfilePostsViewModel extends ViewModel {
     public void setToken(String token) {
         mRepository.setToken(token);
     }
+
+    public void sendFriendRequest(String token, String currentId) {
+        mRepository.sendFriendRequest(token, currentId);
+    }
+
 }

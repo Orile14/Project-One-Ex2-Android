@@ -1,8 +1,14 @@
 package com.example.projectoneex2;
 
+import static com.example.projectoneex2.ImagePost.bitmapToString;
 import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,10 +20,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.projectoneex2.viewmodel.UserViewModel;
 
@@ -25,8 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-// Activity class for user signup
-public class SignUp extends AppCompatActivity {
+public class editProfile extends AppCompatActivity {
+
     public static ArrayList<User> userList = new ArrayList<>();
     private static final int REQUEST_IMAGE_PICK = 2;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -38,15 +40,18 @@ public class SignUp extends AppCompatActivity {
     private EditText editTextRepeatPassword;
     private Bitmap pic;
     private ImageView imageViewProfile;
-    public static MutableLiveData<String> indicator=new MutableLiveData<>();
+    private String token;
+    public static MutableLiveData<String> indicatorE=new MutableLiveData<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.token = getIntent().getStringExtra("TOKEN_KEY");
         //dark mode setting
         loadThemePreference();
         applyTheme();
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_edit_profile);
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickname=findViewById(R.id.editTextNickname);
@@ -76,46 +81,34 @@ public class SignUp extends AppCompatActivity {
             showToast("All fields are required");
             return;
         }
-
-        // Check if passwords match
-        if (!password.equals(repeatPassword)) {
-            showToast("Passwords do not match");
-            return;
-        }
-        // Check if the username is already taken
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                showToast("Username already taken");
-                return;
-            }
-        }
         if (pic == null) {
             showToast("Profile picture is required");
             return;
         }
-        indicator.postValue("wait");
         // Add the new user to the list
         User a=new User(username, password,this.pic,nickname);
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        viewModel.SignUp(a);
+        viewModel.editUser(a,token,FeedActivity.userId);
         AtomicBoolean shownWaitMessage = new AtomicBoolean(false);
-        indicator.observe(this, s -> {
+        indicatorE.postValue("wait");
+        indicatorE.observe(this, s -> {
             if (s.equals("wait") && !shownWaitMessage.get()) {
                 showToast("Please wait");
                 shownWaitMessage.set(true);
             }
             if (s.equals("true")) {
-                Intent i = new Intent(SignUp.this, Login.class);
-                startActivity(i);
                 // Display a success message
-                showToast("Signup successful");
+                showToast("Edit successful");
+                indicatorE.postValue("wait");
+                Login.nickname=nickname;
+                Login.profilePic=bitmapToString(pic);
+                finish();
             }
             if (s.equals("false")) {
                 showToast("Username already taken");
-                indicator.postValue("wait");
+                indicatorE.postValue("wait");
             }
         });
-
     }
 
     // Method to display toast messages
@@ -127,7 +120,7 @@ public class SignUp extends AppCompatActivity {
     private void openGallery() {
         final CharSequence[] options = {"Choose from Gallery", "Take a Picture", "Cancel"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(SignUp.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(editProfile.this);
         builder.setTitle("Choose Action");
         builder.setItems(options, (dialog, item) -> {
             if (options[item].equals("Choose from Gallery")) {

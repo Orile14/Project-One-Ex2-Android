@@ -58,9 +58,6 @@ public class User {
         byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
-    public void setFrinds(String friends) {
-        this.friends = friends;
-    }
 
     // Getter method for retrieving the username
     public String getUsername() {

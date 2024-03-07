@@ -34,6 +34,11 @@ public class ProfilePostsRepositry {
         this.token= token;
     }
 
+    public void sendFriendRequest(String token, String currentId) {
+        PostAPI postAPI = new PostAPI();
+        postAPI.sendFriendRequest(token,currentId);
+    }
+
     class ProfilePostListData extends MutableLiveData<List<ImagePost>> {
         public ProfilePostListData() {
             super();

@@ -49,19 +49,29 @@ public class Comment  {
         this.id = picID;
     }
     public static String bitmapToString(Bitmap bitmap) {
-        if (bitmap==null) {
-            return null;
-        }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         byte[] bytes = outputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
     public static Bitmap stringToBitmap(String encodedString) {
-        if (encodedString==null) {return null;}
-            byte[] bytes = Base64.decode(encodedString, Base64.DEFAULT);
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
+        if (encodedString != null) {
+            if (encodedString.startsWith("data")) {
+                String[] parts = encodedString.split(",");
+                if (parts.length != 2) {
+                    // Handle invalid base64 string
+                    return null;
+                }
+                String base64Data = parts[1];
+                byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            }
+            else {
+                byte[] bytes = Base64.decode(encodedString, Base64.DEFAULT);
+                return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            }
+        }
+        return null;
     }
     // Getter method for retrieving the comment's ID
 

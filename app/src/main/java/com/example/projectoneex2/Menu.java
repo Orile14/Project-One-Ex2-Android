@@ -15,10 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.projectoneex2.viewmodel.UserViewModel;
 
 // Activity class for the menu screen
 public class Menu extends AppCompatActivity {
-
+    String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,19 +30,23 @@ public class Menu extends AppCompatActivity {
         applyTheme();
         // Set layout
         setContentView(R.layout.activity_menu);
+        this.token = getIntent().getStringExtra("TOKEN_KEY");
         // Initialize views
         ImageView profilePic = findViewById(R.id.profileImage);
         profilePic.setImageDrawable(stringToDrawable(Login.profilePic));
         ImageButton home = findViewById(R.id.imageButton2);
         ToggleButton darkModeToggle = findViewById(R.id.toggleButton2);
         TextView textView = findViewById(R.id.username);
+        TextView edit=findViewById(R.id.edit);
+        TextView friends=findViewById(R.id.friends);
         textView.setText(Login.nickname);
         Button logout = findViewById(R.id.Logout);
+         UserViewModel viewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        Button deleteAccount = findViewById(R.id.Delete);
+        TextView friendRequestButton = findViewById(R.id.textView7);
         // Set toggle button state
         darkModeToggle.setChecked(isDarkTheme);
         // Set profile picture and username
-//        profilePic.setImageBitmap(userList.get(0).getProfileImage());
-//        textView.setText(userList.get(0).getNickname());
         // Set OnClickListener for logout button
         logout.setOnClickListener(view -> home());
         // Set OnClickListener for home button
@@ -49,6 +56,26 @@ public class Menu extends AppCompatActivity {
             isDarkTheme = isChecked;
             saveThemePreference();
             recreate(); // Restart activity to apply theme changes
+        });
+        edit.setOnClickListener(view -> {
+            Intent i = new Intent(this, editProfile.class);
+            i.putExtra("TOKEN_KEY", token);
+            startActivity(i);
+        });
+        friends.setOnClickListener(view -> {
+            FeedActivity.currentId = FeedActivity.userId;
+            Intent i = new Intent(this, FriendsList.class);
+            i.putExtra("TOKEN_KEY", token);
+            startActivity(i);
+        });
+        friendRequestButton.setOnClickListener(view -> {
+            Intent i = new Intent(this, FriendsRequest.class);
+            i.putExtra("TOKEN_KEY", token);
+            startActivity(i);
+        });
+        deleteAccount.setOnClickListener(view -> {
+           viewModel.deleteAccount(token);
+                home();
         });
     }
     // Method to navigate to the login screen

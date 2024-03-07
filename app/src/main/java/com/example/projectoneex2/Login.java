@@ -1,4 +1,5 @@
 package com.example.projectoneex2;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -6,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,6 +15,7 @@ import com.example.projectoneex2.viewmodel.UserViewModel;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 // Class responsible for user login functionality
 public class Login extends AppCompatActivity {
@@ -28,6 +31,8 @@ public class Login extends AppCompatActivity {
     private String username;
     public static String nickname;
     public static String profilePic;
+    public static String status;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,23 +67,32 @@ public class Login extends AppCompatActivity {
     }
     // Method to handle user login
     private void loginUser() {
-        final Boolean[] loginStatus = new Boolean[1];
         String username = editTextUsername.getText().toString();
         this.username=username;
         String password = editTextPassword.getText().toString();
         if (viewModel==null) {
             this.viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         }
+        token ="0";
+        status="wait";
         viewModel.getLogin(username, password);
+        AtomicBoolean shownWaitMessage = new AtomicBoolean(false);
         viewModel.getToken(username, password).observe(this, token1 -> {
             token= token1;
-            if (!Objects.equals(token, "")&&token!=null){
+            if (status.equals("success")){
                 loginMove(token);
+                showToastSuccess();
+                status="wait";
             }
-            if (token==null){
+            if (status.equals("failed")){
                 showToast();
+                token ="0"  ;
+                status="wait";
             }
-            token="";
+            if (status.equals("wait")&&!shownWaitMessage.get()){
+                Toast.makeText(this, "wait", Toast.LENGTH_SHORT).show();
+                shownWaitMessage.set(true);
+            }
         });
 
     }
@@ -98,6 +112,9 @@ public class Login extends AppCompatActivity {
     // Method to display a toast message for invalid login attempt
     private void showToast() {
         Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
+    }
+    private void showToastSuccess() {
+        Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show();
     }
     // Method to load theme preference from SharedPreferences
     private void loadThemePreference() {

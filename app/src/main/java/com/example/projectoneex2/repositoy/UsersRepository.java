@@ -3,7 +3,6 @@ package com.example.projectoneex2.repositoy;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.User;
 import com.example.projectoneex2.api.UserAPI;
 
@@ -21,6 +20,15 @@ public class UsersRepository {
 //       this.postApi = postApi;
         userApi = new UserAPI();
     }
+
+    public void editUser(User a, String token, String userId) {
+        userApi.editUser(a,token,userId);
+    }
+
+    public void deleteAccount(String token) {
+        userApi.deleteAccount(token);
+    }
+
     class UserToken extends MutableLiveData<String> {
         public UserToken() {
             super();
@@ -51,6 +59,21 @@ public class UsersRepository {
             userAPI.get(this,username,password);
         }
     }
+//    class SignUpSucces extends MutableLiveData<String> {
+//        public SignUpSucces() {
+//            super();
+//            setValue(new String());
+//        }
+//        @Override
+//        protected void onActive() {
+//            super.onActive();
+////            new Thread(() -> {
+////                postListData.postValue(dao.get());
+////            }).start();
+//            UserAPI userAPI = new UserAPI();
+//            userAPI.get(this,username,password);
+//        }
+//    }
     public LiveData<String> getToken(String username, String password) {
         this.username =username;
         this.password = password;

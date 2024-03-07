@@ -7,11 +7,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.projectoneex2.Comment;
 import com.example.projectoneex2.FeedActivity;
+import com.example.projectoneex2.Friend;
 import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.MyApplication;
 import com.example.projectoneex2.Profile;
 import com.example.projectoneex2.R;
+import com.example.projectoneex2.Request;
 import com.example.projectoneex2.User;
+import com.example.projectoneex2.repositoy.FriendRequestRepository;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -22,6 +25,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,25 +67,17 @@ public class PostAPI {
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
 // Now you can use tokenWithoutSuffix
 // Now you can use tokenWithoutPrefix in your Authorization header
-        Call<ResponseBody> call = webServiceAPI.createPost("Bearer " + tokenWithoutSuffix, jsonObject1);
+        Call<ResponseBody> call = webServiceAPI.createPost("Bearer " + tokenWithoutSuffix, jsonObject1,FeedActivity.userId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 response.body();
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + jsonObject1);
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + jsonObject1);
+
             }
         });
     }
@@ -106,10 +102,6 @@ public class PostAPI {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + jsonObject1);
             }
         });
     }
@@ -151,19 +143,19 @@ public class PostAPI {
                             JSONArray commentsArray = jsonObject.getJSONArray("comments");
                             for (int j = 0; j < commentsArray.length(); j++) {
                                 JSONObject commentObject = commentsArray.getJSONObject(j);
-                                String authorID = commentObject.getString("_id");
+                                String authorID = commentObject.getString("nickname");
                                 String commentContent = commentObject.getString("content");
                                 String commentDate = commentObject.getString("date");
-
+                                String pic=commentObject.getString("profilePic");
                                 Comment comment = new Comment(authorID, commentContent, commentDate);
+                                comment.setAuthorPic(pic);
+                                comment.setId(commentObject.getString("_id"));
                                 if (commentObject.has("likes")) {
                                     JSONArray likeArray = commentObject.getJSONArray("likes");
                                     int a = likeArray.length();
                                     comment.setLikes(a);
-                                    comment.setId(commentObject.getString("_id"));
-                                    comment.setCommentOwnerID(commentObject.getString("commentOwnerID"));
-
                                 }
+                                comment.setCommentOwnerID(commentObject.getString("commentOwnerID"));
                                 // Add comment to post
                                 new_post.addComment(comment);
                             }
@@ -207,20 +199,10 @@ public class PostAPI {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 response.body();
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + post.getId());
-
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + post.getId());
             }
         });
     }
@@ -234,20 +216,20 @@ public class PostAPI {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                response.body();
                 Log.e("API Error", "Response not successful: " + response.code());
                 Log.d("Request Details", "URL: " + call.request().url());
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + postID + " " + commentID);
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+
                 Log.d("Request Details", "URL: " + call.request().url());
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
+
 
             }
         });
@@ -260,7 +242,7 @@ public class PostAPI {
         // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
         String s = post.get_id();
-        Call<ResponseBody> call = webServiceAPI.deletePost("Bearer " + tokenWithoutSuffix, post.get_id());
+        Call<ResponseBody> call = webServiceAPI.deletePost("Bearer " + tokenWithoutSuffix,FeedActivity.userId, post.get_id());
         final Boolean[] indicator = new Boolean[1];
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -269,7 +251,6 @@ public class PostAPI {
                 Log.d("Request Details", "URL: " + call.request().url());
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + post.getId());
             }
 
             @Override
@@ -278,7 +259,6 @@ public class PostAPI {
                 Log.d("Request Details", "URL: " + call.request().url());
                 Log.d("Request Details", "Method: " + call.request().method());
                 Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + post.getId());
             }
         });
     }
@@ -293,19 +273,10 @@ public class PostAPI {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 response.body();
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + postID + " " + commentID);
-
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
 
             }
         });
@@ -325,27 +296,13 @@ public class PostAPI {
                     JSONObject jsonObject = new JSONObject(responseBodyString);
                     String userId = jsonObject.getString("ownerId");
                     FeedActivity.userId = userId;
-                    // Now you have the user ID, you can use it as needed
-                    Log.d("User ID", "User ID: " + userId);
                 } catch (IOException | JSONException e) {
                     throw new RuntimeException(e);
                 }
-
-
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-
-
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-
             }
         });
     }
@@ -362,20 +319,10 @@ public class PostAPI {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 response.body();
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + id + " " + id1);
-
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-
             }
         });
 
@@ -457,22 +404,143 @@ public class PostAPI {
         }).start();
     }
 
-    public void getFriends(String token, String id) {
+    public void getFriends(MutableLiveData friendsListData,String token, String id) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Assuming tokenString is your token with "Bearer" prefix
+                String tokenWithoutPrefix = token.substring(10);
+                // Assuming tokenString is your token
+                String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+                Call<ResponseBody> call = webServiceAPI.getFriends("Bearer " + tokenWithoutSuffix, id);
+                try {
+
+                    // Synchronously execute the request
+                    Response<ResponseBody> response = call.execute();
+                    if (response.isSuccessful()) {
+                        // Response successful, process it
+                        String responseBodyString;
+                        responseBodyString = response.body().string();
+                        JSONObject jsonObject1 = new JSONObject(responseBodyString);
+                        JSONArray jsonArray = jsonObject1.getJSONArray("friends");
+                        List<Friend> friends = new ArrayList<>();
+                        // Iterate through the JSON array
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            // Get each JSON object from the array
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            // Extract data from JSON object
+                            String ID = jsonObject.getString("id");
+                            String img = jsonObject.getString("img");
+                            String profilePic = jsonObject.getString("nick");
+                            Friend friend = new Friend(profilePic, img);
+                            friends.add(friend);
+                        }
+                        friendsListData.postValue(friends);
+                    } else {
+                        // Response not successful, handle error
+                        // Log the error
+                        Log.e("API Error", "Response not successful: " + response.code());
+                        // Exit the application or handle the error as required
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(); // Log the error
+                    // Exit the application or handle the error as required
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
+    }
+
+
+    public void sendFriendRequest(String token, String currentId) {
         String tokenWithoutPrefix = token.substring(10);
         // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-        Call<ResponseBody> call = webServiceAPI.getFriends("Bearer " + tokenWithoutSuffix, id);
+        Call<ResponseBody> call = webServiceAPI.sendFriendRequest("Bearer " + tokenWithoutSuffix, currentId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void getReq( MutableLiveData friendRequestListData, String token) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Assuming tokenString is your token with "Bearer" prefix
+                String tokenWithoutPrefix = token.substring(10);
+                // Assuming tokenString is your token
+                String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+                Call<ResponseBody> call = webServiceAPI.getFriendRequest("Bearer " + tokenWithoutSuffix);
+                try {
+
+                    // Synchronously execute the request
+                    Response<ResponseBody> response = call.execute();
+                    if (response.isSuccessful()) {
+                        // Response successful, process it
+                        String responseBodyString;
+                        responseBodyString = response.body().string();
+                        JSONObject jsonObject1 = new JSONObject(responseBodyString);
+                        JSONArray jsonArray = jsonObject1.getJSONArray("friendsRequest");
+                        List<Request> requests = new ArrayList<>();
+                        // Iterate through the JSON array
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            // Get each JSON object from the array
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            // Extract data from JSON object
+                            String ID = jsonObject.getString("id");
+                            String img = jsonObject.getString("img");
+                            String profilePic = jsonObject.getString("nick");
+                            Request request = new Request(profilePic, ID, img);
+                            requests.add(request);
+                        }
+                        friendRequestListData.postValue(requests);
+                    } else {
+                        // Response not successful, handle error
+                        // Log the error
+                        Log.e("API Error", "Response not successful: " + response.code());
+                        // Exit the application or handle the error as required
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace(); // Log the error
+                    // Exit the application or handle the error as required
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
+    }
+
+    public void editPost(ImagePost post, String token) {
+        String tokenWithoutPrefix = token.substring(10);
+        // Assuming tokenString is your token
+        String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+        JsonObject jsonObject1 = new JsonObject();
+        jsonObject1.addProperty("content", post.getContent());
+        jsonObject1.addProperty("image", post.getUserpic());
+        Call<ResponseBody> call = webServiceAPI.editPost("Bearer " + tokenWithoutSuffix, jsonObject1, post.getPostOwnerID(),
+                post.get_id());
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
                 try {
                     String responseBodyString = response.body().string();
-                    JSONObject jsonObject = new JSONObject(responseBodyString);
-                    String userId = jsonObject.getString("ownerId");
-                    FeedActivity.userId = userId;
-                    // Now you have the user ID, you can use it as needed
-                    Log.d("User ID", "User ID: " + userId);
-                } catch (IOException | JSONException e) {
+                    Log.e("API Error", "Response not successful: " + response.code());
+                    Log.d("Request Details", "URL: " + call.request().url());
+                    Log.d("Request Details", "Method: " + call.request().method());
+                    Log.d("Request Details", "Headers: " + call.request().headers());
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 

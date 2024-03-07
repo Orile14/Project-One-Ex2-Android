@@ -5,6 +5,7 @@ import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,76 +23,48 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.projectoneex2.adapters.FriendRequestAdapter;
 import com.example.projectoneex2.adapters.PostsListAdapter;
 import com.example.projectoneex2.viewmodel.FriendRequestViewModel;
-import com.example.projectoneex2.viewmodel.PostsViewModel;
 import com.example.projectoneex2.viewmodel.ProfilePostsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class Profile extends AppCompatActivity {
-    public static List<ImagePost> profilePosts;
+public class FriendsRequest extends AppCompatActivity implements FriendRequestAdapter.ReqActionListener {
+    private FriendRequestViewModel viewModel;
+    private FriendRequestAdapter adapter;
+    private String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadThemePreference();
         applyTheme();
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_friends_request);
         String token = getIntent().getStringExtra("TOKEN_KEY");
-        TextView username = findViewById(R.id.username);
-        ImageView profilePic = findViewById(R.id.profileImage);
+        this.token = token;
         //marking darkbutton state
-        username.setText(FeedActivity.currentNickname);
-        Drawable profilePicDrawable =stringToDrawable(FeedActivity.currentProfilePic);
-        profilePic.setImageDrawable(profilePicDrawable);
-        Button req= findViewById(R.id.button4);
-        Button delete= findViewById(R.id.Delete);
-        delete.setVisibility(View.INVISIBLE);
-        Button friends= findViewById(R.id.button5);
-        friends.setVisibility(View.INVISIBLE);
-        FloatingActionButton back= findViewById(R.id.floatingActionButton);
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
         RecyclerView lstPosts = findViewById(R.id.lstPosts);
-        PostsListAdapter adapter = new PostsListAdapter(this);
+        FloatingActionButton back= findViewById(R.id.floatingActionButton);
+       FriendRequestAdapter adapter = new FriendRequestAdapter(this);
+       this.adapter = adapter;
+       adapter.setReqActionListener(this);
         lstPosts.setAdapter(adapter);
         lstPosts.setLayoutManager(new LinearLayoutManager(this));
-        ProfilePostsViewModel viewModel;
-        FriendRequestViewModel friendRequestViewModel;
-        friendRequestViewModel=new ViewModelProvider(this).get(FriendRequestViewModel.class);
-        viewModel=new ViewModelProvider(this).get(ProfilePostsViewModel.class);
+        FriendRequestViewModel viewModel;
+        viewModel = new ViewModelProvider(this).get(FriendRequestViewModel.class);
+        this.viewModel = viewModel;
         viewModel.setToken(token);
-        viewModel.getProfilePosts(token).observe(this, imagePosts -> {
-            adapter.setPosts(imagePosts);
-            req.setVisibility(View.INVISIBLE);
-            delete.setVisibility(View.VISIBLE);
-            friends.setVisibility(View.VISIBLE);
+        viewModel.getRequests(token).observe(this, requests -> {
+            adapter.setReq(requests);
             adapter.notifyDataSetChanged();
-
         });
-        req.setOnClickListener(v -> {
-           viewModel.sendFriendRequest(token,FeedActivity.currentId);
-                req.setVisibility(View.INVISIBLE);
-            Toast.makeText(this, "friend request have been sent", Toast.LENGTH_SHORT).show();
-
-            });
         back.setOnClickListener(v -> {
             finish();
         });
-        friends.setOnClickListener(v -> {
-            Intent intent = new Intent(this, FriendsList.class);
-            intent.putExtra("TOKEN_KEY", token);
-            startActivity(intent);
-        });
-        delete.setOnClickListener(v -> {
-            friendRequestViewModel.declineRequest(token,FeedActivity.currentId,FeedActivity.userId);
-            Toast.makeText(this, "friend deleted!", Toast.LENGTH_SHORT).show();
-            finish();
-        });
-
 
     }
 
@@ -127,5 +100,19 @@ public class Profile extends AppCompatActivity {
     // Method to apply the selected theme
     private void applyTheme() {
         setTheme(isDarkTheme ? R.style.AppTheme_Dark : R.style.AppTheme_Light);
+    }
+
+    @Override
+    public void onDeletsButtonClick(int position, FriendRequestAdapter adapter) {
+        viewModel.declineRequest(token, adapter.getRequests().get(position).getID(),FeedActivity.userId);
+        adapter.getRequests().remove(position);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onApproveButtonClick(int position, FriendRequestAdapter adapter) {
+        viewModel.approveRequest(token, adapter.getRequests().get(position).getID(),FeedActivity.userId);
+        adapter.getRequests().remove(position);
+        adapter.notifyDataSetChanged();
     }
 }

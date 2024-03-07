@@ -123,7 +123,11 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
         if (posts != null) {
             final ImagePost current = posts.get(position);
             holder.likeCounter.setText(current.getLikes() + " likes");
-            holder.time.setText(current.getTime());
+            String time= current.getTime();
+            if (time.length() >= 16){
+            String regularTime = time.substring(0,10) + " " + time.substring(11,16);
+            holder.time.setText(regularTime);
+            }
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
             holder.AuthorPic.setImageBitmap(current.getAuthorPicBit());
@@ -132,10 +136,6 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             //-1 is a flag that means we take pic from user(drawable)and not id
                 holder.ivPic.setImageDrawable(current.getUserPicDraw());
                 holder.ivPic.setVisibility(View.VISIBLE);
-            if(current.getAuthor().equals("aUser")){
-                int z=0;
-            }
-
         }
     }
 

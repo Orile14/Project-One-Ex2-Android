@@ -28,11 +28,7 @@ public class PostsRepository {
         this.postAPI = new PostAPI();
     }
 
-   public void getFriends(String token,String id) {
-        PostAPI postAPI = new PostAPI();
-       postAPI.getFriends(token,id);
 
-    }
     public void like(ImagePost post, String token) {
         PostAPI postAPI = new PostAPI();
         postAPI.like(post,token);
@@ -78,6 +74,15 @@ public class PostsRepository {
         postAPI.getUserId(token);
     }
 
+    public void reload() {
+        postAPI.get(postListData,token);
+    }
+
+    public void editPost(ImagePost post, String token) {
+        postAPI.editPost(post,token);
+        postAPI.get(postListData,token);
+    }
+
 
     class PostListData extends MutableLiveData<List<ImagePost>> {
         public PostListData() {
@@ -91,7 +96,9 @@ public class PostsRepository {
     }
 
     public MutableLiveData<List<ImagePost>> getAll() {
-
+        if (token!=null) {
+            postAPI.get(postListData, token);
+        }
         return postListData;
     }
     public void add(ImagePost post,String token) {
@@ -100,6 +107,7 @@ public class PostsRepository {
     }
     public void realod() {
         PostAPI postAPI = new PostAPI();
+        postAPI.get(postListData,token);
     }
 
 

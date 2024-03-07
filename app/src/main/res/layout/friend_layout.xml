@@ -43,17 +43,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/commentText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="sent you a friend request"
-
-            android:textSize="16sp" />
-    </LinearLayout>
+        android:orientation="vertical"/>
 
     <!-- Like Counter -->
     <LinearLayout
@@ -62,38 +52,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="8dp"
         android:paddingTop="10dp"
-        android:paddingBottom="2dp">
-
-        <!-- Like Button -->
-
-        <!-- Edit Button -->
-
-        <!-- Delete Button -->
-
-        <Button
-            android:id="@+id/Approve"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/rounded_button_background"
-            android:backgroundTint="#26AE2B"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:text="approve" />
-
-        <Button
-            android:id="@+id/Decline"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="3dp"
-            android:layout_weight="1"
-            android:background="@drawable/rounded_button_background"
-            android:backgroundTint="#EA2315"
-            android:paddingTop="3dp"
-            android:paddingBottom="3dp"
-            android:text="decline" />
-    </LinearLayout>
+        android:paddingBottom="2dp"/>
 
 
     <View
