@@ -3,6 +3,9 @@ const User = require('../models/user')
 const mongoose = require('mongoose');
 
 const createPost = async (postOwnerID, content, img, date, comments, likesID) => {
+    if (img && !img.startsWith("data")) {
+        img = `data:image/png;base64,${img}`
+    }
     const randomId = new mongoose.Types.ObjectId();
     const post = new Post({ _id: randomId, postOwnerID, content, img, date, comments, likesID });
     const user = await User.findById(postOwnerID);
@@ -16,7 +19,13 @@ const getPostById = async (id) => {
 }
 
 const getPosts = async () => {    
-    return await Post.find({});
+     const posts = await Post.find({});
+     // for each comment in the post, get the user's nickname and profile picture
+     for (let post of posts) {
+         const postOwner = await User.findById(post.postOwnerID);
+         post.profilePic = postOwner.img;
+         post.nick = postOwner.nick;
+     }
 }
 const deletePost = async (post) => {
     return await post.deleteOne();
@@ -33,16 +42,31 @@ const likePost = async (postId, userId) => {
     await post.save();
     return post;
 }
-const updatePost = async (post, content) => {
-    if (!post) return null
+const updatePost = async (req, res) => {
+    const post = await Post.findById(req.params.pid)
+    if (!post) {
+        return res.status(404).json({ errors: ['Post not found'] })
+    }
+    const user = await User.findById(req.userId)
+    if(!user){
+        return res.status(404).json({ errors: ['User not found'] })
+    }
+    const content = req.body.content;
+    const img = req.body.image;
+
+    if (img && !img.startsWith("data")) {
+        post.img = `data:image/png;base64,${img}`;
+    } else {
+        post.img = img;
+    }
+    
     post.content = content
+    
     await post.save();
     return post
 }
 const updateImage = async (post, img) => {
-    console.log(post)
     post.img = img
-    console.log(post)
     await post.save();
     return post
 }
@@ -71,13 +95,14 @@ const getFriendsPosts = async (userId) => {
     return postsWithProfile;
 };
 
-
-
 const addComment = async (commentOwnerID, content, post) => {
     const randomId = new mongoose.Types.ObjectId();
     const date = new Date();
     const likes = [];
-    const newComment = { _id: randomId, commentOwnerID, content, date, likes };
+    const owner = await User.findById(commentOwnerID)
+    const ownerNick = owner.nick;
+    const ownerPic = owner.img;
+    const newComment = { _id: randomId,nickname: ownerNick,profilePic:ownerPic , commentOwnerID, content, date, likes };
 
     await Post.updateOne(
         { _id: post._id },
@@ -88,8 +113,6 @@ const addComment = async (commentOwnerID, content, post) => {
     const updatedPost = await Post.findById(post._id);
     return updatedPost.comments;
 };
-
-
 const updateComment = async (commentId,post, content) => {
     if (!post) return null
     const commentIndex = post.comments.find(comment => comment._id == commentId);
@@ -137,8 +160,19 @@ const deleteComment = async (postId, commentId, userId) => {
         return { status: 500, error: 'Internal server error' };
     }
 };
-
-
-
+const checkIfAuth = async (req, res) => {
+    const user = await User.findById(req.userId);
+    if (!user) {
+        return res.status(404).json({ errors: ['User not found'] });
+    }
+    const post = await Post.findById(req.params.id)
+    if (!post) {
+        return res.status(404).json({ errors: ['Post not found'] })
+    }
+    if (post.postOwnerID != req.userId) {
+        return res.status(401).json({ errors: ['Unauthorized'] })
+    }
+    return (res.json(post))
+}
 module.exports = { createPost, getPosts, getPostById, updatePost, likePost, deletePost, updateImage,
-     addComment,deleteComment ,updateComment,likeComment, getFriendsPosts}
+     addComment,deleteComment ,updateComment,likeComment, getFriendsPosts ,checkIfAuth}

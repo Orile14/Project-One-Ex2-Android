@@ -97,7 +97,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
         try {
             Field field = CursorWindow.class.getDeclaredField("sCursorWindowSize");
             field.setAccessible(true);
-            field.set(null, 10 * 512 * 512); //the 100MB is the new size
+            field.set(null, 100 * 1024 * 1024); //the 100MB is the new size
         } catch (Exception e) {
             e.printStackTrace();
         }
