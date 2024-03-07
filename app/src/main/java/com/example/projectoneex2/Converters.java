@@ -5,14 +5,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
+
 import androidx.room.TypeConverter;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Type;
-import java.util.List;
+//class to convert between different data types
 
 public class Converters {
 

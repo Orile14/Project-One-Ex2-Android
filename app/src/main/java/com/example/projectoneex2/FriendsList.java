@@ -4,36 +4,18 @@ import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
 
+import android.os.Bundle;
+import android.widget.ImageButton;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.util.Base64;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ToggleButton;
-
-import com.example.projectoneex2.adapters.FriendRequestAdapter;
 import com.example.projectoneex2.adapters.FriendsAdapter;
-import com.example.projectoneex2.adapters.PostsListAdapter;
-import com.example.projectoneex2.viewmodel.FriendRequestViewModel;
 import com.example.projectoneex2.viewmodel.FriendsViewModel;
-import com.example.projectoneex2.viewmodel.ProfilePostsViewModel;
-
-import java.util.List;
-
+// Activity for displaying the list of friends
 public class FriendsList extends AppCompatActivity  {
     private FriendsViewModel viewModel;
     private FriendsAdapter adapter;
@@ -41,35 +23,42 @@ public class FriendsList extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //dark mode setting
         loadThemePreference();
         applyTheme();
         setContentView(R.layout.activity_friends_list);
         String token = getIntent().getStringExtra("TOKEN_KEY");
         String ID = getIntent().getStringExtra("ID");
         this.token = token;
+        // Initialize views
         ImageButton home= findViewById(R.id.floatingActionButton);
-        //marking darkbutton state
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
-        RecyclerView lstPosts = findViewById(R.id.lstPosts);
+        RecyclerView friendsList = findViewById(R.id.lstPosts);
         FriendsAdapter adapter = new FriendsAdapter(this);
         this.adapter = adapter;
-        lstPosts.setAdapter(adapter);
-        lstPosts.setLayoutManager(new LinearLayoutManager(this));
+        // Set the adapter
+        friendsList.setAdapter(adapter);
+        friendsList.setLayoutManager(new LinearLayoutManager(this));
         FriendsViewModel viewModel;
         viewModel = new ViewModelProvider(this).get(FriendsViewModel.class);
         this.viewModel = viewModel;
         viewModel.setToken(token);
+        //observe the friend list
         viewModel.getFriends(token).observe(this, friends -> {
             adapter.setFriends(friends);
             adapter.notifyDataSetChanged();
         });
-
+        // Set the listener for the swipe to refresh layout
         home.setOnClickListener(v -> {
             finish();
         });
+        refreshLayout.setOnRefreshListener(() -> {
+            //stop refreshing
+            refreshLayout.setRefreshing(false);
+        });
 
     }
-
+    // Method to load the theme preference from SharedPreferences
     private void loadThemePreference() {
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         isDarkTheme = sharedPreferences.getBoolean(PREF_THEME_KEY, false); // Default is light theme

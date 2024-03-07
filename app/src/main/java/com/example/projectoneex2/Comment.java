@@ -1,27 +1,13 @@
 package com.example.projectoneex2;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-
-
 import java.io.ByteArrayOutputStream;
 
-
+// Class to represent a comment on a post
 public class Comment  {
-
     private String id;
-
-    public String getCommentOwnerID() {
-        return commentOwnerID;
-    }
-
-    public void setCommentOwnerID(String commentOwnerID) {
-        this.commentOwnerID = commentOwnerID;
-    }
-
     private String commentOwnerID;
-    // Comment attributes
     private boolean like = false;
     private final String author;
     private String content;
@@ -42,18 +28,30 @@ public class Comment  {
         this.content = content;
         this.date=date;
     }
+    // Method to retrieve the comment's owner id
+    public String getCommentOwnerID() {
+        return commentOwnerID;
+    }
+    // Method to set the comment's owner id
+    public void setCommentOwnerID(String commentOwnerID) {
+        this.commentOwnerID = commentOwnerID;
+    }
+   // Method to retrieve the comment's id
     public String getId() {
         return id;
     }
+    // Method to set the comment's ID
     public void setId(String picID) {
         this.id = picID;
     }
+    // Method to convert a bitmap to a string
     public static String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         byte[] bytes = outputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+    // Method to convert a string to a bitmap
     public static Bitmap stringToBitmap(String encodedString) {
         if (encodedString != null) {
             if (encodedString.startsWith("data")) {
@@ -73,8 +71,6 @@ public class Comment  {
         }
         return null;
     }
-    // Getter method for retrieving the comment's ID
-
     // Getter method for retrieving the comment author's username
     public String getAuthor() {
         return author;
@@ -99,10 +95,11 @@ public class Comment  {
     public Bitmap getAuthorPicBit() {
         return stringToBitmap(authorPic);
     }
+    // Getter method for retrieving the comment author's profile picture
     public String getAuthorPic() {
         return authorPic;
     }
-
+    // Getter method for setting the author pic of the comment
     public void setAuthorPic(String authorPic) {
         this.authorPic = authorPic;
     }

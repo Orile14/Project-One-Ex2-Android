@@ -73,30 +73,37 @@ public class Login extends AppCompatActivity {
         if (viewModel==null) {
             this.viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         }
+        // Set the token to 0
         token ="0";
+        // Set the status to wait
         status="wait";
         viewModel.getLogin(username, password);
+        // Observe the token
         AtomicBoolean shownWaitMessage = new AtomicBoolean(false);
         viewModel.getToken(username, password).observe(this, token1 -> {
             token= token1;
+            // If the status is succes, redirect to feedActivity
             if (status.equals("success")){
                 loginMove(token);
                 showToastSuccess();
                 status="wait";
             }
+            // If the status if failed, show a toast message
             if (status.equals("failed")){
                 showToast();
                 token ="0"  ;
                 status="wait";
             }
+            // If the status is wait, show a toast message
             if (status.equals("wait")&&!shownWaitMessage.get()){
                 Toast.makeText(this, "wait", Toast.LENGTH_SHORT).show();
+                // Set the shownWaitMessage to true(showing wait only once)
                 shownWaitMessage.set(true);
             }
         });
 
     }
-
+    // Method to redirect to feedActivity
         private void loginMove(String s) {
         if (!Objects.equals(s, "")) {
             // Redirect to feedActivity if login successful
@@ -113,6 +120,7 @@ public class Login extends AppCompatActivity {
     private void showToast() {
         Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
     }
+    // Method to display a toast message for successful login
     private void showToastSuccess() {
         Toast.makeText(this, "Welcome", Toast.LENGTH_SHORT).show();
     }

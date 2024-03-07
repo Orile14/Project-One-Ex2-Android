@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
@@ -22,12 +23,10 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.projectoneex2.viewmodel.UserViewModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // Activity class for user signup
 public class SignUp extends AppCompatActivity {
-    public static ArrayList<User> userList = new ArrayList<>();
     private static final int REQUEST_IMAGE_PICK = 2;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private UserViewModel viewModel=null;
@@ -47,6 +46,7 @@ public class SignUp extends AppCompatActivity {
         loadThemePreference();
         applyTheme();
         setContentView(R.layout.activity_signup);
+        // Initialize views
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickname=findViewById(R.id.editTextNickname);
@@ -72,6 +72,7 @@ public class SignUp extends AppCompatActivity {
         String password = editTextPassword.getText().toString();
         String nickname=editTextNickname.getText().toString();
         String repeatPassword = editTextRepeatPassword.getText().toString();
+        // Check if any field is empty
         if (username.isEmpty() || password.isEmpty() || nickname.isEmpty() || repeatPassword.isEmpty()) {
             showToast("All fields are required");
             return;
@@ -81,13 +82,6 @@ public class SignUp extends AppCompatActivity {
         if (!password.equals(repeatPassword)) {
             showToast("Passwords do not match");
             return;
-        }
-        // Check if the username is already taken
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                showToast("Username already taken");
-                return;
-            }
         }
         if (pic == null) {
             showToast("Profile picture is required");
@@ -99,17 +93,22 @@ public class SignUp extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         viewModel.SignUp(a);
         AtomicBoolean shownWaitMessage = new AtomicBoolean(false);
+        // Observe the indicator
         indicator.observe(this, s -> {
+            // If the status is wait, display a wait message
             if (s.equals("wait") && !shownWaitMessage.get()) {
                 showToast("Please wait");
+                // Set the shownWaitMessage to true to show it only once
                 shownWaitMessage.set(true);
             }
+            // If the status is true, redirect to the login screen
             if (s.equals("true")) {
                 Intent i = new Intent(SignUp.this, Login.class);
                 startActivity(i);
                 // Display a success message
                 showToast("Signup successful");
             }
+            // If the status is false, display a message
             if (s.equals("false")) {
                 showToast("Username already taken");
                 indicator.postValue("wait");
@@ -126,7 +125,6 @@ public class SignUp extends AppCompatActivity {
     // Method to open image gallery for selecting profile picture
     private void openGallery() {
         final CharSequence[] options = {"Choose from Gallery", "Take a Picture", "Cancel"};
-
         AlertDialog.Builder builder = new AlertDialog.Builder(SignUp.this);
         builder.setTitle("Choose Action");
         builder.setItems(options, (dialog, item) -> {
@@ -149,7 +147,7 @@ public class SignUp extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        // Set the profile picture
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
             Uri selectedImageUri = data.getData();
             try {
@@ -159,6 +157,7 @@ public class SignUp extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            // Set the profile picture
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = null;

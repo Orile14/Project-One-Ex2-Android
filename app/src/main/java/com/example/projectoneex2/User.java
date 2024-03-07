@@ -18,10 +18,6 @@ public class User {
     private final String password;
     private String profileImage;
 
-    public String getFriends() {
-        return friends;
-    }
-
     private String friends=null;
 
     private String posts=null;
@@ -33,6 +29,7 @@ public class User {
         this.profileImage=bitmapToString(pic);
         this.nickname=nickname;
     }
+    //converts a bitmap to a string
     public static String bitmapToString(Bitmap bitmap) {
         if (bitmap == null) {
             return null;
@@ -42,12 +39,18 @@ public class User {
         byte[] bytes = outputStream.toByteArray();
         return Base64.encodeToString(bytes, Base64.DEFAULT);
     }
+    public String getFriends() {
+        return friends;
+    }
+    // Method to get the posts
     public String getPosts() {
         return posts;
     }
+    // Method to set the posts
     public void setPosts(String posts) {
         this.posts = posts;
     }
+    // Method to convert a string to a bitmap
     public static Bitmap stringToBitmap(String encodedString) {
         String[] parts = encodedString.split(",");
         if (parts.length != 2) {
@@ -78,10 +81,11 @@ public class User {
     public Bitmap getProfileImage() {
         return stringToBitmap(profileImage);
     }
+    // Getter method for retrieving the profile image
     public String getProfile() {
         return profileImage;
     }
-
+    // Getter method for retrieving the user id
     public String getId() {
         return id;
     }

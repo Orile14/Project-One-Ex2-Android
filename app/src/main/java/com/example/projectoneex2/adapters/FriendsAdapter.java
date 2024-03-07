@@ -4,8 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,19 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projectoneex2.Friend;
-import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.R;
-import com.example.projectoneex2.Request;
 
 import java.util.List;
 
+// Adapter class for managing the display of friend in a friends list
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendViewHolder> {
 
 
     private final FriendsAdapter adapter;
 
-    // Interface for defining post action listener methods
-    // View holder class for managing individual post views
+    // Interface for defining friend action listener methods
+    // View holder class for managing individual friends views
     class FriendViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvAuthor;
         public ImageView AuthorPic;
@@ -50,7 +47,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
     }
 
 
-    // Method to create a view holder for a post item
+    // Method to create a view holder for a friend item
     @Override
     public FriendsAdapter.FriendViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.friend_layout, parent, false);
@@ -58,20 +55,15 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
     }
 
 
-
+    // Method to bind data to a friend item view
     @Override
     public void onBindViewHolder(@NonNull FriendsAdapter.FriendViewHolder holder, int position) {
         holder.tvAuthor.setText(friends.get(position).getUsername());
         holder.AuthorPic.setImageBitmap(friends.get(position).getImgBitmap());
     }
 
-    // Method to bind data to a post item view
 
-    public void onBindViewHolder(PostsListAdapter.PostViewHolder holder, int position) {
-
-    }
-
-    // Method to set the list of posts
+    // Method to set the list of friends
     public void setFriends(List<Friend> s) {
 
         friends = s;
@@ -80,7 +72,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
     }
 
 
-    // Method to get the total number of posts
+    // Method to get the total number of friends
     @Override
     public int getItemCount() {
         return (friends != null) ? friends.size() : 0;

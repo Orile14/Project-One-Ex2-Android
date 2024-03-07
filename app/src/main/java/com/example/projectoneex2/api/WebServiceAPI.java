@@ -14,6 +14,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface WebServiceAPI {
+    // Define the API endpoints according to the assignment requirements
     @GET("users/{id}/posts")
     Call<ResponseBody> getUserPosts(@Header("Authorization") String token, @Path("id") String id);
     @GET("users/{id}/friends")

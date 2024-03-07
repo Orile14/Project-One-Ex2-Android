@@ -2,7 +2,6 @@ package com.example.projectoneex2.api;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.projectoneex2.Comment;
@@ -10,11 +9,8 @@ import com.example.projectoneex2.FeedActivity;
 import com.example.projectoneex2.Friend;
 import com.example.projectoneex2.ImagePost;
 import com.example.projectoneex2.MyApplication;
-import com.example.projectoneex2.Profile;
 import com.example.projectoneex2.R;
 import com.example.projectoneex2.Request;
-import com.example.projectoneex2.User;
-import com.example.projectoneex2.repositoy.FriendRequestRepository;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -25,7 +21,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,23 +31,29 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+// Class for managing API requests related to posts
+
 public class PostAPI {
 
     Retrofit retrofit;
 
     WebServiceAPI webServiceAPI;
 
+    // Constructor to initialize the API
 
     public PostAPI() {
+        // Create a new Retrofit instance
         retrofit = new Retrofit.Builder()
                 .baseUrl(MyApplication.context.getString(R.string.BaseUrl))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        // Create a new instance of the WebServiceAPI interface
         webServiceAPI = retrofit.create(WebServiceAPI.class);
 
     }
-
+    // Method to create a new post
     public void create(ImagePost post, String token) {
+        // Create a new JSON object to hold the post data
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault());
         JsonObject jsonObject1 = new JsonObject();
         jsonObject1.addProperty("postOwnerID", post.getAuthor());
@@ -61,43 +62,32 @@ public class PostAPI {
         jsonObject1.addProperty("date", dateFormat.format(System.currentTimeMillis()));
         jsonObject1.add("comments", new JsonArray()); // Empty array for comments
         jsonObject1.add("likesID", new JsonArray()); // Empty array for likes
-        // Assuming tokenString is your token with "Bearer" prefix
+        // formatting toke
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-// Now you can use tokenWithoutSuffix
-// Now you can use tokenWithoutPrefix in your Authorization header
         Call<ResponseBody> call = webServiceAPI.createPost("Bearer " + tokenWithoutSuffix, jsonObject1,FeedActivity.userId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                response.body();
-
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
             }
         });
     }
-
+    // Method to create a new comment
     public void createComment(String postID, String token, Comment comment, MutableLiveData<List<ImagePost>> postListData) {
+        // Create a new JSON object to hold the comment data
         JsonObject jsonObject1 = new JsonObject();
         jsonObject1.addProperty("content", comment.getContent());
+        // formatting token
         String tokenWithoutPrefix = token.substring(10);
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
         Call<ResponseBody> call = webServiceAPI.createComment("Bearer " + tokenWithoutSuffix, postID, jsonObject1);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                response.body();
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-                Log.d("Request Details", "Body: " + jsonObject1);
-
             }
 
             @Override
@@ -105,32 +95,24 @@ public class PostAPI {
             }
         });
     }
-
+    // Method to get the list of posts
     public void get(MutableLiveData<List<ImagePost>> postListData, String token) {
-        // Execute the network request in a background thread
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Assuming tokenString is your token with "Bearer" prefix
-                String tokenWithoutPrefix = token.substring(10);
-                // Assuming tokenString is your token
-                String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-                Call<ResponseBody> call = webServiceAPI.getPosts("Bearer " + tokenWithoutSuffix);
-                try {
+        // Formatting token
+        String tokenWithoutPrefix = token.substring(10);
+        String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+        Call<ResponseBody> call = webServiceAPI.getPosts("Bearer " + tokenWithoutSuffix);
 
-                    // Synchronously execute the request
-                    Response<ResponseBody> response = call.execute();
-                    if (response.isSuccessful()) {
-                        // Response successful, process it
-                        String responseBodyString;
-                        responseBodyString = response.body().string();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBodyString = response.body().string();
                         JSONArray jsonArray = new JSONArray(responseBodyString);
                         List<ImagePost> posts = new ArrayList<>();
-                        // Iterate through the JSON array
+                        // Iterate through the JSON array and get the posts details
                         for (int i = 0; i < jsonArray.length(); i++) {
-                            // Get each JSON object from the array
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            // Extract data from JSON object
                             String ID = jsonObject.getString("_id");
                             String author = jsonObject.getString("nick");
                             String content = jsonObject.getString("content");
@@ -141,59 +123,59 @@ public class PostAPI {
                             ImagePost new_post = new ImagePost(author, content, img, profilePic, time, ID);
                             new_post.setPostOwnerID(AuthorId);
                             JSONArray commentsArray = jsonObject.getJSONArray("comments");
+
                             for (int j = 0; j < commentsArray.length(); j++) {
                                 JSONObject commentObject = commentsArray.getJSONObject(j);
                                 String authorID = commentObject.getString("nickname");
                                 String commentContent = commentObject.getString("content");
                                 String commentDate = commentObject.getString("date");
-                                String pic=commentObject.getString("profilePic");
+                                String pic = commentObject.getString("profilePic");
                                 Comment comment = new Comment(authorID, commentContent, commentDate);
                                 comment.setAuthorPic(pic);
                                 comment.setId(commentObject.getString("_id"));
+
                                 if (commentObject.has("likes")) {
                                     JSONArray likeArray = commentObject.getJSONArray("likes");
                                     int a = likeArray.length();
                                     comment.setLikes(a);
                                 }
                                 comment.setCommentOwnerID(commentObject.getString("commentOwnerID"));
-                                // Add comment to post
                                 new_post.addComment(comment);
                             }
+
                             JSONArray likeArray = jsonObject.getJSONArray("likesID");
                             int j = likeArray.length();
                             new_post.setLikes(j);
-                            // Add the Post object to the list
                             posts.add(new_post);
                         }
+                        // Set the list of posts in the MutableLiveData object
                         postListData.postValue(posts);
-
-                    } else {
-                        // Response not successful, handle error
-                        // Log the error
-                        Log.e("API Error", "Response not successful: " + response.code());
-                        // Exit the application or handle the error as required
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                        // Handle error
                     }
-                } catch (IOException e) {
-                    e.printStackTrace(); // Log the error
-                    // Exit the application or handle the error as required
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
+                } else {
+                    // Response not successful, handle error
+                    Log.e("API Error", "Response not successful: " + response.code());
+                    // Handle error
                 }
             }
-        }).start();
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Log the error
+                Log.e("API Error", "Request failed: " + t.getMessage());
+                // Handle error
+            }
+        });
     }
-
+    // Method to like a post
     public void like(ImagePost post, String token) {
-
-        // Assuming tokenString is your token with "Bearer" prefix
+        //formatting token
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
-        String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
+        String tokenWithoutSuffix = tokenWithoutPrefix.substring(0,
+                tokenWithoutPrefix.length() - 2);
 
-// Now you can use tokenWithoutSuffix
-
-
-// Now you can use tokenWithoutPrefix in your Authorization header
         Call<ResponseBody> call = webServiceAPI.likePost("Bearer " + tokenWithoutSuffix, post.get_id());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -206,67 +188,43 @@ public class PostAPI {
             }
         });
     }
-
+    // Method to like a comment
     public void CommentLike(String postID, String commentID, String token) {
-        // Assuming tokenString is your token with "Bearer" prefix
+        // formatting token
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
         Call<ResponseBody> call = webServiceAPI.commentLike("Bearer " + tokenWithoutSuffix, postID, commentID);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {;
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-
-
             }
         });
 
     }
-
+    // Method to delete a post
     public void delete(ImagePost post, String token) {
-        // Assuming tokenString is your token with "Bearer" prefix
+        //formatting token
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-        String s = post.get_id();
         Call<ResponseBody> call = webServiceAPI.deletePost("Bearer " + tokenWithoutSuffix,FeedActivity.userId, post.get_id());
-        final Boolean[] indicator = new Boolean[1];
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
             }
         });
     }
-
+    // Method to delete a comment
     public void deleteComment(String postID, String commentID, String token) {
-        // Assuming tokenString is your token with "Bearer" prefix
+        //formatting token
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
         Call<ResponseBody> call = webServiceAPI.commentDelete("Bearer " + tokenWithoutSuffix, postID, commentID);
         call.enqueue(new Callback<ResponseBody>() {
@@ -281,23 +239,22 @@ public class PostAPI {
             }
         });
     }
-
+    // Method to get the user ID
     public void getUserId(String token) {
-
+        //formatting token
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
         Call<ResponseBody> call = webServiceAPI.getUserId("Bearer " + tokenWithoutSuffix);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
+                    // Get the response body as a string
                     String responseBodyString = response.body().string();
                     JSONObject jsonObject = new JSONObject(responseBodyString);
-                    String userId = jsonObject.getString("ownerId");
-                    FeedActivity.userId = userId;
+                    FeedActivity.userId = jsonObject.getString("ownerId");
                 } catch (IOException | JSONException e) {
-                    throw new RuntimeException(e);
+                      e.printStackTrace();
                 }
             }
 
@@ -306,15 +263,15 @@ public class PostAPI {
             }
         });
     }
-
-    public void editComment(String id, String id1, String updatedContent, String token) {
+    // Method to edit a comment
+    public void editComment(String postId, String userId, String updatedContent, String token) {
+        // Create a new JSON object to hold the updated comment content
         JsonObject jsonObject1 = new JsonObject();
         jsonObject1.addProperty("content", updatedContent);
-        // Assuming tokenString is your token with "Bearer" prefix
+        // formatting token
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-        Call<ResponseBody> call = webServiceAPI.commentEdit("Bearer " + tokenWithoutSuffix, jsonObject1, id, id1);
+        Call<ResponseBody> call = webServiceAPI.commentEdit("Bearer " + tokenWithoutSuffix, jsonObject1, postId, userId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -327,18 +284,16 @@ public class PostAPI {
         });
 
     }
-
+    // Method to get the user posts
     public void getProfilePosts(String currentId, MutableLiveData postListData, String token) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Assuming tokenString is your token with "Bearer" prefix
+                // formatting token
                 String tokenWithoutPrefix = token.substring(10);
-                // Assuming tokenString is your token
                 String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
                 Call<ResponseBody> call = webServiceAPI.getUserPosts("Bearer " + tokenWithoutSuffix, currentId);
                 try {
-
                     // Synchronously execute the request
                     Response<ResponseBody> response = call.execute();
                     if (response.isSuccessful()) {
@@ -386,6 +341,7 @@ public class PostAPI {
                             // Add the Post object to the list
                             posts.add(new_post);
                         }
+                        // Set the list of posts in the MutableLiveData object
                         postListData.postValue(posts);
 
                     } else {
@@ -403,18 +359,16 @@ public class PostAPI {
             }
         }).start();
     }
-
+    // Method to get the user friends
     public void getFriends(MutableLiveData friendsListData,String token, String id) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Assuming tokenString is your token with "Bearer" prefix
+                // formatting token
                 String tokenWithoutPrefix = token.substring(10);
-                // Assuming tokenString is your token
                 String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
                 Call<ResponseBody> call = webServiceAPI.getFriends("Bearer " + tokenWithoutSuffix, id);
                 try {
-
                     // Synchronously execute the request
                     Response<ResponseBody> response = call.execute();
                     if (response.isSuccessful()) {
@@ -452,13 +406,12 @@ public class PostAPI {
         }).start();
 
     }
-
-
-    public void sendFriendRequest(String token, String currentId) {
+    // Method to send a friend request
+    public void sendFriendRequest(String token, String userId) {
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
+        // formatting token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
-        Call<ResponseBody> call = webServiceAPI.sendFriendRequest("Bearer " + tokenWithoutSuffix, currentId);
+        Call<ResponseBody> call = webServiceAPI.sendFriendRequest("Bearer " + tokenWithoutSuffix, userId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -471,18 +424,16 @@ public class PostAPI {
             }
         });
     }
-
+    // Method to get the friend requests
     public void getReq( MutableLiveData friendRequestListData, String token) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                // Assuming tokenString is your token with "Bearer" prefix
+                // formatting token
                 String tokenWithoutPrefix = token.substring(10);
-                // Assuming tokenString is your token
                 String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
                 Call<ResponseBody> call = webServiceAPI.getFriendRequest("Bearer " + tokenWithoutSuffix);
                 try {
-
                     // Synchronously execute the request
                     Response<ResponseBody> response = call.execute();
                     if (response.isSuccessful()) {
@@ -520,10 +471,10 @@ public class PostAPI {
         }).start();
 
     }
-
+    // Method to approve a friend request
     public void editPost(ImagePost post, String token) {
+        //formatting token
         String tokenWithoutPrefix = token.substring(10);
-        // Assuming tokenString is your token
         String tokenWithoutSuffix = tokenWithoutPrefix.substring(0, tokenWithoutPrefix.length() - 2);
         JsonObject jsonObject1 = new JsonObject();
         jsonObject1.addProperty("content", post.getContent());
@@ -533,31 +484,10 @@ public class PostAPI {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-                try {
-                    String responseBodyString = response.body().string();
-                    Log.e("API Error", "Response not successful: " + response.code());
-                    Log.d("Request Details", "URL: " + call.request().url());
-                    Log.d("Request Details", "Method: " + call.request().method());
-                    Log.d("Request Details", "Headers: " + call.request().headers());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-
-                Log.e("API Error", "Response not successful: " + response.code());
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
-
-
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Request Details", "URL: " + call.request().url());
-                Log.d("Request Details", "Method: " + call.request().method());
-                Log.d("Request Details", "Headers: " + call.request().headers());
 
             }
         });

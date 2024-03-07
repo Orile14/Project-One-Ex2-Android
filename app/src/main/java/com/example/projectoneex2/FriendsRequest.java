@@ -4,35 +4,18 @@ import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.util.Base64;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ToggleButton;
-
 import com.example.projectoneex2.adapters.FriendRequestAdapter;
-import com.example.projectoneex2.adapters.PostsListAdapter;
 import com.example.projectoneex2.viewmodel.FriendRequestViewModel;
-import com.example.projectoneex2.viewmodel.ProfilePostsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
-
+// Activity for displaying the list of friend requests
 public class FriendsRequest extends AppCompatActivity implements FriendRequestAdapter.ReqActionListener {
     private FriendRequestViewModel viewModel;
     private FriendRequestAdapter adapter;
@@ -45,19 +28,22 @@ public class FriendsRequest extends AppCompatActivity implements FriendRequestAd
         setContentView(R.layout.activity_friends_request);
         String token = getIntent().getStringExtra("TOKEN_KEY");
         this.token = token;
-        //marking darkbutton state
+        // Initialize views
         SwipeRefreshLayout refreshLayout = findViewById(R.id.refreshLayout);
-        RecyclerView lstPosts = findViewById(R.id.lstPosts);
+        // Set the listener for the swipe to refresh layout
+        RecyclerView reqList = findViewById(R.id.lstPosts);
         FloatingActionButton back= findViewById(R.id.floatingActionButton);
        FriendRequestAdapter adapter = new FriendRequestAdapter(this);
        this.adapter = adapter;
        adapter.setReqActionListener(this);
-        lstPosts.setAdapter(adapter);
-        lstPosts.setLayoutManager(new LinearLayoutManager(this));
+       // Set the adapter
+        reqList.setAdapter(adapter);
+        reqList.setLayoutManager(new LinearLayoutManager(this));
         FriendRequestViewModel viewModel;
         viewModel = new ViewModelProvider(this).get(FriendRequestViewModel.class);
         this.viewModel = viewModel;
         viewModel.setToken(token);
+        //observe the requests list
         viewModel.getRequests(token).observe(this, requests -> {
             adapter.setReq(requests);
             adapter.notifyDataSetChanged();
@@ -65,29 +51,13 @@ public class FriendsRequest extends AppCompatActivity implements FriendRequestAd
         back.setOnClickListener(v -> {
             finish();
         });
+        refreshLayout.setOnRefreshListener(() -> {
+            //stop refreshing
+            refreshLayout.setRefreshing(false);
+        });
 
     }
-
-    public  Drawable stringToDrawable(String encodedString) {
-        if (encodedString == null) {
-            return null;
-        }
-        if (encodedString.startsWith("data")) {
-            String[] parts = encodedString.split(",");
-            if (parts.length != 2) {
-                // Handle invalid base64 string
-                return null;
-            }
-            String base64Data = parts[1];
-            byte[] bytes = Base64.decode(base64Data, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            return new BitmapDrawable(bitmap);
-        } else {
-            byte[] bytes = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            return new BitmapDrawable(bitmap);
-        }
-    }
+    // Method to load the theme preference from SharedPreferences
     private void loadThemePreference() {
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         isDarkTheme = sharedPreferences.getBoolean(PREF_THEME_KEY, false); // Default is light theme
@@ -101,14 +71,14 @@ public class FriendsRequest extends AppCompatActivity implements FriendRequestAd
     private void applyTheme() {
         setTheme(isDarkTheme ? R.style.AppTheme_Dark : R.style.AppTheme_Light);
     }
-
+    // Method to handle the delete button click
     @Override
     public void onDeletsButtonClick(int position, FriendRequestAdapter adapter) {
         viewModel.declineRequest(token, adapter.getRequests().get(position).getID(),FeedActivity.userId);
         adapter.getRequests().remove(position);
         adapter.notifyDataSetChanged();
     }
-
+    // Method to handle the approve button click
     @Override
     public void onApproveButtonClick(int position, FriendRequestAdapter adapter) {
         viewModel.approveRequest(token, adapter.getRequests().get(position).getID(),FeedActivity.userId);

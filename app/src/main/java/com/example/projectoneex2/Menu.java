@@ -5,7 +5,6 @@ import static com.example.projectoneex2.ImagePost.stringToDrawable;
 import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
-import static com.example.projectoneex2.Login.userList;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -57,22 +57,26 @@ public class Menu extends AppCompatActivity {
             saveThemePreference();
             recreate(); // Restart activity to apply theme changes
         });
+        // Set OnClickListener for the edit profile button
         edit.setOnClickListener(view -> {
             Intent i = new Intent(this, editProfile.class);
             i.putExtra("TOKEN_KEY", token);
             startActivity(i);
         });
+        // Set OnClickListener for the friends button
         friends.setOnClickListener(view -> {
             FeedActivity.currentId = FeedActivity.userId;
             Intent i = new Intent(this, FriendsList.class);
             i.putExtra("TOKEN_KEY", token);
             startActivity(i);
         });
+        // Set OnClickListener for the friend request button
         friendRequestButton.setOnClickListener(view -> {
             Intent i = new Intent(this, FriendsRequest.class);
             i.putExtra("TOKEN_KEY", token);
             startActivity(i);
         });
+        // Set OnClickListener for the delete account button
         deleteAccount.setOnClickListener(view -> {
            viewModel.deleteAccount(token);
                 home();

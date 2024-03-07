@@ -5,11 +5,6 @@ import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -21,15 +16,17 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.projectoneex2.viewmodel.UserViewModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
-
+//  Activity for editing user profile
 public class editProfile extends AppCompatActivity {
-
-    public static ArrayList<User> userList = new ArrayList<>();
     private static final int REQUEST_IMAGE_PICK = 2;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private UserViewModel viewModel=null;
@@ -52,6 +49,7 @@ public class editProfile extends AppCompatActivity {
         loadThemePreference();
         applyTheme();
         setContentView(R.layout.activity_edit_profile);
+        // Initialize views
         editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextNickname=findViewById(R.id.editTextNickname);
@@ -59,6 +57,7 @@ public class editProfile extends AppCompatActivity {
         Button btnSignUp = findViewById(R.id.btnSignUp);
         imageViewProfile = findViewById(R.id.imageViewProfile);
         ToggleButton darkModeToggle = findViewById(R.id.toggleButton);
+        // Set the initial state of the dark mode toggle
         darkModeToggle.setChecked(isDarkTheme);
         // Set onClickListener for the signup button
         btnSignUp.setOnClickListener(view -> signupUser());
@@ -77,6 +76,7 @@ public class editProfile extends AppCompatActivity {
         String password = editTextPassword.getText().toString();
         String nickname=editTextNickname.getText().toString();
         String repeatPassword = editTextRepeatPassword.getText().toString();
+        // Validate the input
         if (username.isEmpty() || password.isEmpty() || nickname.isEmpty() || repeatPassword.isEmpty()) {
             showToast("All fields are required");
             return;
@@ -89,6 +89,7 @@ public class editProfile extends AppCompatActivity {
         User a=new User(username, password,this.pic,nickname);
         viewModel = new ViewModelProvider(this).get(UserViewModel.class);
         viewModel.editUser(a,token,FeedActivity.userId);
+        // Create a LiveData object to observe the result of the signup operation
         AtomicBoolean shownWaitMessage = new AtomicBoolean(false);
         indicatorE.postValue("wait");
         indicatorE.observe(this, s -> {
@@ -119,7 +120,6 @@ public class editProfile extends AppCompatActivity {
     // Method to open image gallery for selecting profile picture
     private void openGallery() {
         final CharSequence[] options = {"Choose from Gallery", "Take a Picture", "Cancel"};
-
         AlertDialog.Builder builder = new AlertDialog.Builder(editProfile.this);
         builder.setTitle("Choose Action");
         builder.setItems(options, (dialog, item) -> {
@@ -142,7 +142,7 @@ public class editProfile extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        // Handle the image selection from gallery or camera
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
             Uri selectedImageUri = data.getData();
             try {
@@ -152,6 +152,7 @@ public class editProfile extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            // Handle the image capture from camera
         } else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = null;
