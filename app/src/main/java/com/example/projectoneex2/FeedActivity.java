@@ -507,9 +507,12 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
                 // Set a temporary ID (-1 indicates an user image post)
                 post.setPicID(-1);
                 // Set the user profile picture to the selected image
-                if (d!=null) {
-                    post.setUserpicDraw(d);
+                if(share==true) {
+                    if (d != null) {
+                        post.setUserpicDraw(d);
+                    }
                 }
+                imageViewProfile.setImageResource(R.drawable.ic_photo_foreground);
                 //edit the post
                 viewModel.editPost(post,token);
                 // Update the post in the database
