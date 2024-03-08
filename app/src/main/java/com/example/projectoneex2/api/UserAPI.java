@@ -41,7 +41,6 @@ public class UserAPI {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
-
     }
 
     // Method to get a user's token
