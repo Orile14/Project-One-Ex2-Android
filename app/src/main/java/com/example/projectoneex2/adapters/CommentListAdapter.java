@@ -96,7 +96,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
             final Comment current = comments.get(position);
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
-            holder.pic.setImageBitmap(current.getAuthorPic());
+            holder.pic.setImageBitmap(current.getAuthorPicBit());
         }
     }
 

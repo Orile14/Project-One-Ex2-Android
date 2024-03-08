@@ -41,4 +41,5 @@
     <string name="enter_your_post_content_here">Enter your post content here</string>
     <string name="enter_your_post_content_here2">Enter your post content here</string>
     <string name="upload_photo">Upload Photo</string>
+    <string name="BaseUrl">http://10.0.2.2:12345/api/</string>
 </resources>
