@@ -27,6 +27,9 @@ import com.example.projectoneex2.adapters.PostsListAdapter;
 import com.example.projectoneex2.viewmodel.FriendRequestViewModel;
 import com.example.projectoneex2.viewmodel.ProfilePostsViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.Objects;
+
 // Activity for displaying the user profile
 public class Profile extends AppCompatActivity {
     @Override
@@ -66,7 +69,9 @@ public class Profile extends AppCompatActivity {
         viewModel.getProfilePosts(token).observe(this, imagePosts -> {
             adapter.setPosts(imagePosts);
             req.setVisibility(View.INVISIBLE);
+            if (!Objects.equals(FeedActivity.currentId, FeedActivity.userId)){
             delete.setVisibility(View.VISIBLE);
+            }
             friends.setVisibility(View.VISIBLE);
             adapter.notifyDataSetChanged();
 

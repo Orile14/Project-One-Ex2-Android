@@ -3,8 +3,11 @@ package com.example.projectoneex2;
 import static com.example.projectoneex2.Login.PREF_THEME_KEY;
 import static com.example.projectoneex2.Login.isDarkTheme;
 import static com.example.projectoneex2.Login.sharedPreferences;
+import android.Manifest;
+
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +20,8 @@ import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -28,8 +33,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 // Activity class for user signup
 public class SignUp extends AppCompatActivity {
     private static final int REQUEST_IMAGE_PICK = 2;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 8;
     private UserViewModel viewModel=null;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 1001; // You can choose any integer value
+
     // Views
     private EditText editTextUsername;
     private EditText editTextNickname;
@@ -132,10 +139,15 @@ public class SignUp extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, REQUEST_IMAGE_PICK);
             } else if (options[item].equals("Take a Picture")) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                // Check if the CAMERA permission is not granted
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    // Request the CAMERA permission
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
+                } else {
+                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
+
             } else if (options[item].equals("Cancel")) {
                 dialog.dismiss();
             }
