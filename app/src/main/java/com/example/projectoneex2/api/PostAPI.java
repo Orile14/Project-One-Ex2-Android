@@ -69,6 +69,10 @@ public class PostAPI {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code()==400){
+                    // Handle error
+                    FeedActivity.banned.postValue("banned");
+                }
             }
 
             @Override

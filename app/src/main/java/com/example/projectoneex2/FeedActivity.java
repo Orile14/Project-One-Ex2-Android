@@ -31,6 +31,7 @@ import android.widget.ToggleButton;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -76,6 +77,7 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
     private ImagePostDao postDao    ;
     private List<User> Friends;
     PostAPI postAPI;
+    public static MutableLiveData<String> banned=new MutableLiveData<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +128,13 @@ public class FeedActivity extends AppCompatActivity implements PostsListAdapter.
             }
             if (dialog!=null){
                 showCommentDialog(position);
+            }
+        });
+        //observing the banned status
+        banned.observe(this, s -> {
+            if (s!=null&&s.equals("banned")) {
+               Toast.makeText(this,"this  link is banned",Toast.LENGTH_SHORT).show();
+                banned.postValue("not banned");
             }
         });
 
